@@ -77,7 +77,7 @@ class MainMenuWindow(QMainWindow):
         self.setPalette(main_window_palette)
 
         # Set the window opacity
-        self.setWindowOpacity(0.8)
+        self.setWindowOpacity(0.95)
 
         # Set the window geometry
         screen_geometry = QApplication.primaryScreen().geometry()
@@ -303,6 +303,10 @@ class MainMenuWindow(QMainWindow):
         msg_box.setWindowFlags(msg_box.windowFlags() | Qt.WindowStaysOnTopHint)
         # 显示消息框
         msg_box.exec()
+
+        screenshot = ImageGrab.grab(bbox=(self.geometry().x(), self.geometry().y(),
+                                                self.geometry().x() + self.geometry().width(),
+                                                self.geometry().y() + self.geometry().height()))
         
     def toggle_capture(self):
         if self.capturing:
@@ -747,8 +751,6 @@ if __name__ == "__main__":
 
     # Show the windows
     main_capturing_window.show()
-
-    count = 0
     
     # start the app
     sys.exit(App.exec())
