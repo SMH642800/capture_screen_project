@@ -167,7 +167,7 @@ class MainMenuWindow(QMainWindow):
         screen_geometry = QApplication.primaryScreen().geometry()
         self.setGeometry(screen_geometry.x() + (screen_geometry.width() // 3) * 2, 
                          screen_geometry.y() + screen_geometry.height() // 4,
-                         screen_geometry.width() // 4, screen_geometry.height() // 2)
+                         screen_geometry.width() // 5, screen_geometry.height() // 2.5)
         
         # Create a button to add the screen capture window
         #self.add_window_button = QPushButton("", self)
