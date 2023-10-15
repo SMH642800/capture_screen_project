@@ -169,7 +169,8 @@ class MainMenuWindow(QMainWindow):
         
         # Create a button to add the screen capture window
         #self.add_window_button = QPushButton("", self)
-        self.add_window_button = ScalableButton("add_window_button", "img/ui/screenshot_monitor_white_24dp.svg")
+        new_file_path = os.path.join(self.app_dir, "img/ui/screenshot_monitor_white_24dp.svg")
+        self.add_window_button = ScalableButton("add_window_button", new_file_path)
         self.add_window_button.setToolTip("新增螢幕擷取視窗")
         # 使用样式表自定义按钮的外观
         self.add_window_button.setStyleSheet(
@@ -202,7 +203,8 @@ class MainMenuWindow(QMainWindow):
 
         # Create a capturing button to start screen capture
         #self.action_button = QPushButton("", self)
-        self.action_button = ScalableButton("action_button", "img/ui/radio_button_unchecked_white_24dp.svg")
+        new_file_path = os.path.join(self.app_dir, "img/ui/radio_button_unchecked_white_24dp.svg")
+        self.action_button = ScalableButton("action_button", new_file_path)
         self.action_button.setToolTip("開始擷取畫面")
         self.action_button.setStyleSheet(
             "QPushButton {"
@@ -235,7 +237,8 @@ class MainMenuWindow(QMainWindow):
 
         # Create a button to pin the window on the toppest
         # self.pin_button = QPushButton("", self)
-        self.pin_button = ScalableButton("pin_button", "img/ui/near_me_disabled_white_24dp.svg")
+        new_file_path = os.path.join(self.app_dir, "img/ui/near_me_disabled_white_24dp.svg")
+        self.pin_button = ScalableButton("pin_button", new_file_path)
         self.pin_button.setToolTip("取消釘選")
         self.pin_button.setStyleSheet(
             "QPushButton {"
@@ -268,7 +271,8 @@ class MainMenuWindow(QMainWindow):
 
         # Create a button to open settings window
         # self.settings_button = QPushButton("", self)
-        self.settings_button = ScalableButton("settings_button", "img/ui/settings_white_24dp.svg")
+        new_file_path = os.path.join(self.app_dir, "img/ui/settings_white_24dp.svg")
+        self.settings_button = ScalableButton("settings_button", new_file_path)
         self.settings_button.setToolTip("設定")
         self.settings_button.setStyleSheet(
             "QPushButton {"
@@ -523,7 +527,8 @@ class MainMenuWindow(QMainWindow):
     def pin_on_top(self):
         if self.is_pined:
             self.is_pined = False
-            self.pin_button.createIcon("img/ui/near_me_white_24dp.svg")
+            new_file_path = os.path.join(self.app_dir, "img/ui/near_me_white_24dp.svg")
+            self.pin_button.createIcon(new_file_path)
             self.pin_button.setToolTip("釘選在最上層")
 
             # set icon to pin_button (pin_diasabled)
@@ -538,7 +543,8 @@ class MainMenuWindow(QMainWindow):
             self.show()
         else:
             self.is_pined = True
-            self.pin_button.createIcon("img/ui/near_me_disabled_white_24dp.svg")
+            new_file_path = os.path.join(self.app_dir, "img/ui/near_me_disabled_white_24dp.svg")
+            self.pin_button.createIcon(new_file_path)
             self.pin_button.setToolTip("取消釘選")
 
             # set icon to pin_button (pin_diasabled)
@@ -638,7 +644,8 @@ class MainMenuWindow(QMainWindow):
     def start_capture(self):
         if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
             self.capturing = True 
-            self.action_button.createIcon("img/ui/radio_button_checked_white_24dp.svg")
+            new_file_path = os.path.join(self.app_dir, "img/ui/radio_button_checked_white_24dp.svg")
+            self.action_button.createIcon(new_file_path)
             self.action_button.setToolTip("停止擷取畫面")
 
             # set icon to action_button (stop capturing icon)
@@ -679,7 +686,8 @@ class MainMenuWindow(QMainWindow):
             self.capturing_system_state_timer.stop()
 
             self.capturing = False
-            self.action_button.createIcon("img/ui/radio_button_unchecked_white_24dp.svg")
+            new_file_path = os.path.join(self.app_dir, "img/ui/radio_button_unchecked_white_24dp.svg")
+            self.action_button.createIcon(new_file_path)
             self.action_button.setToolTip("開始擷取畫面")
 
             # set icon to action_button (stop capturing icon)
