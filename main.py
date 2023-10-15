@@ -9,7 +9,7 @@ import numpy as np
 from PIL import ImageGrab, Image
 from PySide6.QtGui import QPalette, QColor, QFontMetrics, QIcon
 from PySide6.QtWidgets import QMainWindow, QMessageBox, QApplication, QPushButton, QHBoxLayout, QWidget
-from PySide6.QtCore import Signal, QTimer, QProcess, QSize
+from PySide6.QtCore import Signal, QTimer, QProcess, QSize, Property, QObject, QEasingCurve, QPropertyAnimation
 from google.cloud import vision_v1
 from google.cloud import translate_v2 as translate
 from google.oauth2 import service_account
@@ -33,11 +33,95 @@ def set_google_translation():
     # 初始化Google Cloud Translation API客戶端
     client_translate = translate.Client()   
 
-def request_screen_capture_permission():
-    # 使用 QProcess 执行 tccutil 命令请求权限
-    process = QProcess()
-    process.start("tccutil", ["--insert", "public.screen-Recording"])
-    process.waitForFinished()
+
+# create icon scale signal
+class IconScaler(QObject):
+    icon_size_changed = Signal(QSize)
+
+    def __init__(self):
+        super().__init__()
+        self._icon_size = QSize(32, 32)
+
+    @Property(QSize, notify=icon_size_changed)
+    def icon_size(self):
+        return self._icon_size
+
+    @icon_size.setter
+    def icon_size(self, size):
+        self._icon_size = size
+        self.icon_size_changed.emit(size)
+
+# create button scale class and add the animations when cursor hover、press、release the button
+class ScalableButton(QPushButton):
+    def __init__(self, name, icon_path, parent=None):
+        super().__init__(parent)
+        self.setMouseTracking(True)
+        self.icon_path = icon_path
+        self.icon_scaler = IconScaler()
+        self.is_pressed = False
+
+        # 创建一个属性动画
+        self.animation = QPropertyAnimation(self.icon_scaler, b"icon_size")
+        self.animation.setDuration(200)  # 动画持续时间（毫秒）
+        self.animation.setEasingCurve(QEasingCurve.InOutQuad)  # 使用适合的缓动曲线
+
+        # 连接 icon_size_changed 信号以更新按钮的图标大小
+        self.icon_scaler.icon_size_changed.connect(self.updateIconSize)
+
+        # 连接 pressed 信号和 released 信号以执行缩小和恢复操作
+        self.pressed.connect(self.onButtonPressed)
+        self.released.connect(self.onButtonReleased)
+
+        self.setObjectName(name)  # 设置按钮的对象名称
+
+        # 创建初始图标
+        self.createIcon(icon_path)
+
+        # 连接按钮的点击信号到自定义槽函数
+        #self.clicked.connect(self.onButtonClicked)
+
+    def createIcon(self, path):
+        # 创建一个图标
+        icon = QIcon(path)
+
+        # 设置图标到按钮
+        self.setIcon(icon)
+
+        # 设置初始图标大小
+        self.setIconSize(self.icon_scaler.icon_size)
+
+    def onButtonPressed(self):
+        # 鼠标按下按钮，缩小图标并更改为新图标（如果有）
+        self.animateIconSize(QSize(32, 32))
+        self.is_pressed = True
+
+    def onButtonReleased(self):
+        # 鼠标释放按钮，恢复原始图标大小
+        self.is_pressed = False
+        self.createIcon(self.icon_path)
+        self.animateIconSize(QSize(40, 40))
+
+    # def onButtonClicked(self):
+    #     # 当按钮被点击时，执行其他函数
+    #     print(f"{self.objectName()} clicked")
+
+    def enterEvent(self, event):
+        # 鼠标进入按钮，放大图标
+        if not self.is_pressed:  # 仅当按钮未按下时放大
+            self.animateIconSize(QSize(40, 40))
+
+    def leaveEvent(self, event):
+        # 鼠标离开按钮，还原原始图标大小
+        if not self.is_pressed:  # 仅当按钮未按下时还原
+            self.animateIconSize(QSize(32, 32))
+
+    def animateIconSize(self, target_size):
+        self.animation.setStartValue(self.icon_scaler.icon_size)
+        self.animation.setEndValue(target_size)
+        self.animation.start()
+
+    def updateIconSize(self, size):
+        self.setIconSize(size)
 
 
 class MainMenuWindow(QMainWindow):
@@ -84,7 +168,8 @@ class MainMenuWindow(QMainWindow):
                          screen_geometry.width() // 4, screen_geometry.height() // 2)
         
         # Create a button to add the screen capture window
-        self.add_window_button = QPushButton("", self)
+        #self.add_window_button = QPushButton("", self)
+        self.add_window_button = ScalableButton("add_window_button", "img/ui/screenshot_monitor_white_24dp.svg")
         self.add_window_button.setToolTip("新增螢幕擷取視窗")
         # 使用样式表自定义按钮的外观
         self.add_window_button.setStyleSheet(
@@ -107,16 +192,17 @@ class MainMenuWindow(QMainWindow):
         )
 
         # set icon to add_capture_window_button
-        add_capture_window_path = "img/ui/screenshot_monitor_white_24dp.svg"
-        add_capture_window_icon = QIcon(add_capture_window_path)
-        self.add_window_button.setIcon(add_capture_window_icon)
-        self.add_window_button.setIconSize(QSize(32, 32))  # Scale the icon size
-        self.add_window_button.setMinimumSize(40, 40)  # Set the minimum size for the button to ensure the icon fits
+        # add_capture_window_path = "img/ui/screenshot_monitor_white_24dp.svg"
+        # add_capture_window_icon = QIcon(add_capture_window_path)
+        # self.add_window_button.setIcon(add_capture_window_icon)
+        # self.add_window_button.setIconSize(QSize(32, 32))  # Scale the icon size
+        self.add_window_button.setMinimumSize(45, 45)  # Set the minimum size for the button to ensure the icon fits
 
         self.add_window_button.clicked.connect(self.add_or_check_screen_capture_window)
 
         # Create a capturing button to start screen capture
-        self.action_button = QPushButton("", self)
+        #self.action_button = QPushButton("", self)
+        self.action_button = ScalableButton("action_button", "img/ui/radio_button_unchecked_white_24dp.svg")
         self.action_button.setToolTip("開始擷取畫面")
         self.action_button.setStyleSheet(
             "QPushButton {"
@@ -138,17 +224,18 @@ class MainMenuWindow(QMainWindow):
         )
 
         # set icon to action_button
-        action_icon_path = "img/ui/radio_button_unchecked_white_24dp.svg"
-        action_icon = QIcon(action_icon_path)
-        self.action_button.setIcon(action_icon)
-        self.action_button.setIconSize(QSize(32, 32))  # Scale the icon size
-        self.action_button.setMinimumSize(40, 40)  # Set the minimum size for the button to ensure the icon fits
+        # action_icon_path = "img/ui/radio_button_unchecked_white_24dp.svg"
+        # action_icon = QIcon(action_icon_path)
+        # self.action_button.setIcon(action_icon)
+        # self.action_button.setIconSize(QSize(32, 32))  # Scale the icon size
+        self.action_button.setMinimumSize(45, 45)  # Set the minimum size for the button to ensure the icon fits
 
         self.action_button.clicked.connect(self.toggle_capture)
         self.capturing = False  # Track capturing state
 
         # Create a button to pin the window on the toppest
-        self.pin_button = QPushButton("", self)
+        # self.pin_button = QPushButton("", self)
+        self.pin_button = ScalableButton("pin_button", "img/ui/near_me_disabled_white_24dp.svg")
         self.pin_button.setToolTip("取消釘選")
         self.pin_button.setStyleSheet(
             "QPushButton {"
@@ -170,17 +257,18 @@ class MainMenuWindow(QMainWindow):
         )
 
         # set icon to pin_button
-        pin_icon_path = "img/ui/near_me_disabled_white_24dp.svg"
-        pin_icon = QIcon(pin_icon_path)
-        self.pin_button.setIcon(pin_icon)
-        self.pin_button.setIconSize(QSize(32, 32))  # Scale the icon size
-        self.pin_button.setMinimumSize(40, 40)  # Set the minimum size for the button to ensure the icon fits
+        # pin_icon_path = "img/ui/near_me_disabled_white_24dp.svg"
+        # pin_icon = QIcon(pin_icon_path)
+        # self.pin_button.setIcon(pin_icon)
+        # self.pin_button.setIconSize(QSize(32, 32))  # Scale the icon size
+        self.pin_button.setMinimumSize(45, 45)  # Set the minimum size for the button to ensure the icon fits
 
         self.pin_button.clicked.connect(self.pin_on_top)
         self.is_pined = True  # Track pining state
 
         # Create a button to open settings window
-        self.settings_button = QPushButton("", self)
+        # self.settings_button = QPushButton("", self)
+        self.settings_button = ScalableButton("settings_button", "img/ui/settings_white_24dp.svg")
         self.settings_button.setToolTip("設定")
         self.settings_button.setStyleSheet(
             "QPushButton {"
@@ -202,11 +290,11 @@ class MainMenuWindow(QMainWindow):
         )
 
         # set icon to settings_button
-        settings_icon_path = "img/ui/settings_white_24dp.svg"
-        settings_icon = QIcon(settings_icon_path)
-        self.settings_button.setIcon(settings_icon)
-        self.settings_button.setIconSize(QSize(32, 32))  # Scale the icon size
-        self.settings_button.setMinimumSize(40, 40)  # Set the minimum size for the button to ensure the icon fits
+        # settings_icon_path = "img/ui/settings_white_24dp.svg"
+        # settings_icon = QIcon(settings_icon_path)
+        # self.settings_button.setIcon(settings_icon)
+        # self.settings_button.setIconSize(QSize(32, 32))  # Scale the icon size
+        self.settings_button.setMinimumSize(45, 45)  # Set the minimum size for the button to ensure the icon fits
 
         # connect button to show_settings funciton
         self.settings_button.clicked.connect(self.show_settings)
@@ -435,28 +523,30 @@ class MainMenuWindow(QMainWindow):
     def pin_on_top(self):
         if self.is_pined:
             self.is_pined = False
+            self.pin_button.createIcon("img/ui/near_me_white_24dp.svg")
             self.pin_button.setToolTip("釘選在最上層")
 
             # set icon to pin_button (pin_diasabled)
-            pin_icon_path = "img/ui/near_me_white_24dp.svg"
-            pin_icon = QIcon(pin_icon_path)
-            self.pin_button.setIcon(pin_icon)
-            self.pin_button.setIconSize(QSize(32, 32))  # Scale the icon size
-            self.pin_button.setMinimumSize(40, 40)  # Set the minimum size for the button to ensure the icon fits
+            # pin_icon_path = "img/ui/near_me_white_24dp.svg"
+            # pin_icon = QIcon(pin_icon_path)
+            # self.pin_button.setIcon(pin_icon)
+            # self.pin_button.setIconSize(QSize(32, 32))  # Scale the icon size
+            # self.pin_button.setMinimumSize(40, 40)  # Set the minimum size for the button to ensure the icon fits
 
             # 移除screen_capture_window的最上层标志
             self.setWindowFlag(Qt.WindowStaysOnTopHint, False)
             self.show()
         else:
             self.is_pined = True
+            self.pin_button.createIcon("img/ui/near_me_disabled_white_24dp.svg")
             self.pin_button.setToolTip("取消釘選")
 
             # set icon to pin_button (pin_diasabled)
-            pin_icon_path = "img/ui/near_me_disabled_white_24dp.svg"
-            pin_icon = QIcon(pin_icon_path)
-            self.pin_button.setIcon(pin_icon)
-            self.pin_button.setIconSize(QSize(32, 32))  # Scale the icon size
-            self.pin_button.setMinimumSize(40, 40)  # Set the minimum size for the button to ensure the icon fits
+            # pin_icon_path = "img/ui/near_me_disabled_white_24dp.svg"
+            # pin_icon = QIcon(pin_icon_path)
+            # self.pin_button.setIcon(pin_icon)
+            # self.pin_button.setIconSize(QSize(32, 32))  # Scale the icon size
+            # self.pin_button.setMinimumSize(40, 40)  # Set the minimum size for the button to ensure the icon fits
 
             # 恢复screen_capture_window的最上层标志
             self.setWindowFlag(Qt.WindowStaysOnTopHint)
@@ -548,13 +638,14 @@ class MainMenuWindow(QMainWindow):
     def start_capture(self):
         if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
             self.capturing = True 
+            self.action_button.createIcon("img/ui/radio_button_checked_white_24dp.svg")
             self.action_button.setToolTip("停止擷取畫面")
 
             # set icon to action_button (stop capturing icon)
-            action_icon_path = "img/ui/radio_button_checked_white_24dp.svg"
-            action_icon = QIcon(action_icon_path)
-            self.action_button.setIcon(action_icon)
-            self.action_button.setIconSize(QSize(32, 32))  # Scale the icon size
+            # action_icon_path = "img/ui/radio_button_checked_white_24dp.svg"
+            # action_icon = QIcon(action_icon_path)
+            # self.action_button.setIcon(action_icon)
+            # self.action_button.setIconSize(QSize(32, 32))  # Scale the icon size
 
             self.action_button.clicked.disconnect()
             self.action_button.clicked.connect(self.stop_capture)
@@ -588,13 +679,15 @@ class MainMenuWindow(QMainWindow):
             self.capturing_system_state_timer.stop()
 
             self.capturing = False
+            self.action_button.createIcon("img/ui/radio_button_unchecked_white_24dp.svg")
             self.action_button.setToolTip("開始擷取畫面")
 
             # set icon to action_button (stop capturing icon)
-            action_icon_path = "img/ui/radio_button_unchecked_white_24dp.svg"
-            action_icon = QIcon(action_icon_path)
-            self.action_button.setIcon(action_icon)
-            self.action_button.setIconSize(QSize(32, 32))  # Scale the icon size
+            # action_icon_path = "img/ui/radio_button_unchecked_white_24dp.svg"
+            # action_icon = QIcon(action_icon_path)
+            # self.action_button.setIcon(action_icon)
+            # self.action_button.setIconSize(QSize(32, 32))  # Scale the icon size
+
             self.action_button.clicked.disconnect()
             self.action_button.clicked.connect(self.toggle_capture)
 
@@ -661,7 +754,7 @@ class ScreenCaptureWindow(QMainWindow):
         self.setPalette(capture_window_palette)
 
         # 設置視窗的特明度
-        self.setWindowOpacity(0.6)
+        self.setWindowOpacity(0.7)
 
         # 创建一个水平布局管理器
         layout = QHBoxLayout()
