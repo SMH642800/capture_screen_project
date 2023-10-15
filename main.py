@@ -7,11 +7,9 @@ import cv2
 import html
 import numpy as np 
 from PIL import ImageGrab, Image
-from multiprocessing import freeze_support, set_start_method   # <---add this
-from PySide6.QtGui import QPalette, QColor, QFontMetrics
-from PySide6.QtWidgets import QMainWindow, QMessageBox
-from PySide6.QtCore import Signal, QTimer, QProcess
-from PySide6.QtWidgets import QApplication
+from PySide6.QtGui import QPalette, QColor, QFontMetrics, QIcon
+from PySide6.QtWidgets import QMainWindow, QMessageBox, QApplication, QPushButton, QHBoxLayout, QWidget
+from PySide6.QtCore import Signal, QTimer, QProcess, QSize
 from google.cloud import vision_v1
 from google.cloud import translate_v2 as translate
 from google.oauth2 import service_account
@@ -82,33 +80,139 @@ class MainMenuWindow(QMainWindow):
         # Set the window geometry
         screen_geometry = QApplication.primaryScreen().geometry()
         self.setGeometry(screen_geometry.x() + (screen_geometry.width() // 3) * 2, 
-                         screen_geometry.y() + screen_geometry.height() // 3,
-                         screen_geometry.width() // 4, screen_geometry.height() // 3)
+                         screen_geometry.y() + screen_geometry.height() // 4,
+                         screen_geometry.width() // 4, screen_geometry.height() // 2)
         
         # Create a button to add the screen capture window
-        self.add_window_button = QPushButton("Add Capture Window", self)
+        self.add_window_button = QPushButton("", self)
+        # 使用样式表自定义按钮的外观
+        self.add_window_button.setStyleSheet(
+            "QPushButton {"
+            "    background-color: rgba(0, 0, 0, 0);"
+            "    color: rgb(58, 134, 255);"
+            #"    border: 2px solid rgb(58, 134, 255);"
+            "    border-radius: 8px;"
+            "}"
+            "QPushButton:hover {"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #488EF7, stop: 1 #3478F6);"
+            "    border: none;"
+            "    color: white;"
+            "}"
+            "QPushButton:pressed {"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #3879E3, stop: 1 #2D66EA);"
+            "    border: none;"
+            "    color: white;"
+            "}"
+        )
+
+        # set icon to add_capture_window_button
+        add_capture_window_path = "img/ui/screenshot_monitor_white_24dp.svg"
+        add_capture_window_icon = QIcon(add_capture_window_path)
+        self.add_window_button.setIcon(add_capture_window_icon)
+        self.add_window_button.setIconSize(QSize(32, 32))  # Scale the icon size
+        self.add_window_button.setMinimumSize(40, 40)  # Set the minimum size for the button to ensure the icon fits
+
         self.add_window_button.clicked.connect(self.add_or_check_screen_capture_window)
 
         # Create a capturing button to start screen capture
-        self.action_button = QPushButton("Capture", self)
+        self.action_button = QPushButton("", self)
+        self.action_button.setStyleSheet(
+            "QPushButton {"
+            "    background-color: rgba(0, 0, 0, 0);"
+            "    color: rgb(58, 134, 255);"
+            #"    border: 2px solid rgb(58, 134, 255);"
+            "    border-radius: 8px;"
+            "}"
+            "QPushButton:hover {"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #488EF7, stop: 1 #3478F6);"
+            "    border: none;"
+            "    color: white;"
+            "}"
+            "QPushButton:pressed {"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #3879E3, stop: 1 #2D66EA);"
+            "    border: none;"
+            "    color: white;"
+            "}"
+        )
+
+        # set icon to action_button
+        action_icon_path = "img/ui/radio_button_unchecked_white_24dp.svg"
+        action_icon = QIcon(action_icon_path)
+        self.action_button.setIcon(action_icon)
+        self.action_button.setIconSize(QSize(32, 32))  # Scale the icon size
+        self.action_button.setMinimumSize(40, 40)  # Set the minimum size for the button to ensure the icon fits
+
         self.action_button.clicked.connect(self.toggle_capture)
         self.capturing = False  # Track capturing state
 
         # Create a button to pin the window on the toppest
-        self.pin_button = QPushButton("not pin", self)
+        self.pin_button = QPushButton("", self)
+        self.pin_button.setStyleSheet(
+            "QPushButton {"
+            "    background-color: rgba(0, 0, 0, 0);"
+            "    color: rgb(58, 134, 255);"
+            #"    border: 2px solid rgb(58, 134, 255);"
+            "    border-radius: 8px;"
+            "}"
+            "QPushButton:hover {"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #488EF7, stop: 1 #3478F6);"
+            "    border: none;"
+            "    color: white;"
+            "}"
+            "QPushButton:pressed {"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #3879E3, stop: 1 #2D66EA);"
+            "    border: none;"
+            "    color: white;"
+            "}"
+        )
+
+        # set icon to pin_button
+        pin_icon_path = "img/ui/near_me_disabled_white_24dp.svg"
+        pin_icon = QIcon(pin_icon_path)
+        self.pin_button.setIcon(pin_icon)
+        self.pin_button.setIconSize(QSize(32, 32))  # Scale the icon size
+        self.pin_button.setMinimumSize(40, 40)  # Set the minimum size for the button to ensure the icon fits
+
         self.pin_button.clicked.connect(self.pin_on_top)
         self.is_pined = True  # Track pining state
 
         # Create a button to open settings window
-        self.settings_button = QPushButton("Settings", self)
+        self.settings_button = QPushButton("", self)
+        self.settings_button.setStyleSheet(
+            "QPushButton {"
+            "    background-color: rgba(0, 0, 0, 0);"
+            "    color: rgb(58, 134, 255);"
+            #"    border: 2px solid rgb(58, 134, 255);"
+            "    border-radius: 8px;"
+            "}"
+            "QPushButton:hover {"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #488EF7, stop: 1 #3478F6);"
+            "    border: none;"
+            "    color: white;"
+            "}"
+            "QPushButton:pressed {"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #3879E3, stop: 1 #2D66EA);"
+            "    border: none;"
+            "    color: white;"
+            "}"
+        )
+
+        # set icon to settings_button
+        settings_icon_path = "img/ui/settings_white_24dp.svg"
+        settings_icon = QIcon(settings_icon_path)
+        self.settings_button.setIcon(settings_icon)
+        self.settings_button.setIconSize(QSize(32, 32))  # Scale the icon size
+        self.settings_button.setMinimumSize(40, 40)  # Set the minimum size for the button to ensure the icon fits
+
+        # connect button to show_settings funciton
         self.settings_button.clicked.connect(self.show_settings)
 
         # Set button backgrounds to transparent
         #self.add_window_button.setStyleSheet('QPushButton {background-color: transparent; color: red;}')
-        self.add_window_button.setStyleSheet('QPushButton {background-color: white; color: red;}')
-        self.action_button.setStyleSheet('QPushButton {background-color: white; color: red;}')
-        self.pin_button.setStyleSheet('QPushButton {background-color: white; color: red;}')
-        self.settings_button.setStyleSheet('QPushButton {background-color: white; color: red;}')
+        # self.add_window_button.setStyleSheet('QPushButton {background-color: white; color: red;}')
+        # self.action_button.setStyleSheet('QPushButton {background-color: white; color: red;}')
+        # self.pin_button.setStyleSheet('QPushButton {background-color: white; color: red;}')
+        # self.settings_button.setStyleSheet('QPushButton {background-color: white; color: red;}')
 
         # 創建用於顯示 google credential憑證狀態 的 QLabel
         self.google_credential_state = QLabel("Google 憑證：", self)
@@ -190,12 +294,22 @@ class MainMenuWindow(QMainWindow):
         # Create a vertical layout
         layout = QVBoxLayout()
 
+        # 设置左侧的按钮为固定大小且靠左
+        # self.add_window_button.setFixedSize(100, 30)  # 调整按钮的大小
+        # self.action_button.setFixedSize(100, 30)
+        # self.pin_button.setFixedSize(100, 30)
+
+        # 设置右侧按钮为固定大小且靠右
+        #self.settings_button.setFixedSize(100, 30)
+
         # Create a horizontal layout for add_window_button, action_button, pin_button, settings_button
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.add_window_button)
         button_layout.addWidget(self.action_button)
         button_layout.addWidget(self.pin_button)
+        button_layout.addStretch(1)  # 弹簧项，推动右边的按钮靠右
         button_layout.addWidget(self.settings_button)
+
 
         # Create a horizontal layout for google_credential_state, system_state
         system_state_layout = QHBoxLayout()
@@ -317,14 +431,26 @@ class MainMenuWindow(QMainWindow):
     def pin_on_top(self):
         if self.is_pined:
             self.is_pined = False 
-            self.pin_button.setText("pin")
+
+            # set icon to pin_button (pin_diasabled)
+            pin_icon_path = "img/ui/near_me_white_24dp.svg"
+            pin_icon = QIcon(pin_icon_path)
+            self.pin_button.setIcon(pin_icon)
+            self.pin_button.setIconSize(QSize(32, 32))  # Scale the icon size
+            self.pin_button.setMinimumSize(40, 40)  # Set the minimum size for the button to ensure the icon fits
 
             # 移除screen_capture_window的最上层标志
             self.setWindowFlag(Qt.WindowStaysOnTopHint, False)
             self.show()
         else:
             self.is_pined = True 
-            self.pin_button.setText("not pin")
+
+            # set icon to pin_button (pin_diasabled)
+            pin_icon_path = "img/ui/near_me_disabled_white_24dp.svg"
+            pin_icon = QIcon(pin_icon_path)
+            self.pin_button.setIcon(pin_icon)
+            self.pin_button.setIconSize(QSize(32, 32))  # Scale the icon size
+            self.pin_button.setMinimumSize(40, 40)  # Set the minimum size for the button to ensure the icon fits
 
             # 恢复screen_capture_window的最上层标志
             self.setWindowFlag(Qt.WindowStaysOnTopHint)
@@ -416,10 +542,18 @@ class MainMenuWindow(QMainWindow):
     def start_capture(self):
         if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
             self.capturing = True 
-            self.action_button.setText("Stop")
+
+            # set icon to action_button (stop capturing icon)
+            action_icon_path = "img/ui/radio_button_checked_white_24dp.svg"
+            action_icon = QIcon(action_icon_path)
+            self.action_button.setIcon(action_icon)
+            self.action_button.setIconSize(QSize(32, 32))  # Scale the icon size
+
             self.action_button.clicked.disconnect()
             self.action_button.clicked.connect(self.stop_capture)
+
             self.screen_capture_window.start_capture()
+
             self.add_window_button.setEnabled(False)
             self.settings_button.setEnabled(False)
 
@@ -447,10 +581,17 @@ class MainMenuWindow(QMainWindow):
             self.capturing_system_state_timer.stop()
 
             self.capturing = False
-            self.action_button.setText("Capture")
+
+            # set icon to action_button (stop capturing icon)
+            action_icon_path = "img/ui/radio_button_unchecked_white_24dp.svg"
+            action_icon = QIcon(action_icon_path)
+            self.action_button.setIcon(action_icon)
+            self.action_button.setIconSize(QSize(32, 32))  # Scale the icon size
             self.action_button.clicked.disconnect()
             self.action_button.clicked.connect(self.toggle_capture)
+
             self.screen_capture_window.stop_capture()
+
             self.add_window_button.setEnabled(True)
             self.settings_button.setEnabled(True)
 
@@ -739,9 +880,6 @@ if __name__ == "__main__":
     # read config file class
     config_handler = ConfigHandler()
     config_handler.read_config_file()
-
-    set_start_method('fork')
-    freeze_support()  # <----- add this
 
     # create pyside6 app
     App = QApplication(sys.argv)
