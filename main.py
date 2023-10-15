@@ -5,7 +5,9 @@ import os
 import sys
 import cv2
 import html
+import subprocess
 import numpy as np 
+from io import BytesIO
 from PIL import ImageGrab, Image
 from PySide6.QtGui import QPalette, QColor, QFontMetrics, QIcon
 from PySide6.QtWidgets import QMainWindow, QMessageBox, QApplication, QPushButton, QHBoxLayout, QWidget
@@ -169,7 +171,7 @@ class MainMenuWindow(QMainWindow):
         
         # Create a button to add the screen capture window
         #self.add_window_button = QPushButton("", self)
-        new_file_path = os.path.join(self.app_dir, "img/ui/screenshot_monitor_white_24dp.svg")
+        new_file_path = os.path.join(self.app_dir, "img/ui/desktop_windows_white_24dp.svg")
         self.add_window_button = ScalableButton("add_window_button", new_file_path)
         self.add_window_button.setToolTip("新增螢幕擷取視窗")
         # 使用样式表自定义按钮的外观
@@ -234,6 +236,39 @@ class MainMenuWindow(QMainWindow):
 
         self.action_button.clicked.connect(self.toggle_capture)
         self.capturing = False  # Track capturing state
+
+        # Create a button to capture the screenshot
+        new_file_path = os.path.join(self.app_dir, "img/ui/screenshot_monitor_white_24dp.svg")
+        self.screenshot_button = ScalableButton("add_window_button", new_file_path)
+        self.screenshot_button.setToolTip("螢幕截圖")
+        # 使用样式表自定义按钮的外观
+        self.screenshot_button.setStyleSheet(
+            "QPushButton {"
+            "    background-color: rgba(0, 0, 0, 0);"
+            "    color: rgb(58, 134, 255);"
+            #"    border: 2px solid rgb(58, 134, 255);"
+            "    border-radius: 8px;"
+            "}"
+            "QPushButton:hover {"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #488EF7, stop: 1 #3478F6);"
+            "    border: none;"
+            "    color: white;"
+            "}"
+            "QPushButton:pressed {"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #3879E3, stop: 1 #2D66EA);"
+            "    border: none;"
+            "    color: white;"
+            "}"
+        )
+
+        # set icon to add_capture_window_button
+        # add_capture_window_path = "img/ui/screenshot_monitor_white_24dp.svg"
+        # add_capture_window_icon = QIcon(add_capture_window_path)
+        # self.add_window_button.setIcon(add_capture_window_icon)
+        # self.add_window_button.setIconSize(QSize(32, 32))  # Scale the icon size
+        self.screenshot_button.setMinimumSize(45, 45)  # Set the minimum size for the button to ensure the icon fits
+
+        self.screenshot_button.clicked.connect(self.capture_screenshot)
 
         # Create a button to pin the window on the toppest
         # self.pin_button = QPushButton("", self)
@@ -402,6 +437,7 @@ class MainMenuWindow(QMainWindow):
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.add_window_button)
         button_layout.addWidget(self.action_button)
+        button_layout.addWidget(self.screenshot_button)
         button_layout.addWidget(self.pin_button)
         button_layout.addStretch(1)  # 弹簧项，推动右边的按钮靠右
         button_layout.addWidget(self.settings_button)
@@ -450,7 +486,7 @@ class MainMenuWindow(QMainWindow):
             self.delayed_show_message_box()
 
             # set only setting button enabled
-            for button in [self.add_window_button, self.action_button, self.pin_button]:
+            for button in [self.add_window_button, self.action_button, self.screenshot_button, self.pin_button]:
                 button.setEnabled(False)
 
             # 設置 google_credential_label
@@ -475,7 +511,7 @@ class MainMenuWindow(QMainWindow):
                 self.google_credential_state.setText("Google 憑證： <font color='green'>憑證有效</font> ")
 
                 # set all button enabled
-                for button in [self.add_window_button, self.action_button, self.pin_button, self.settings_button]:
+                for button in [self.add_window_button, self.action_button, self.screenshot_button, self.pin_button, self.settings_button]:
                     button.setEnabled(True)
 
             except Exception as e:
@@ -483,7 +519,7 @@ class MainMenuWindow(QMainWindow):
                 self.google_credential_state.setText("Google 憑證： <font color='red'>憑證無效</font> ")
 
                 # set only setting button enabled
-                for button in [self.add_window_button, self.action_button, self.pin_button]:
+                for button in [self.add_window_button, self.action_button, self.screenshot_button, self.pin_button]:
                     button.setEnabled(False)
                 self.settings_button.setEnabled(True)
         else:
@@ -491,7 +527,7 @@ class MainMenuWindow(QMainWindow):
             self.google_credential_state.setText("Google 憑證： <font color='red'>無設置憑證</font> ")
 
             # set only setting button enabled
-            for button in [self.add_window_button, self.action_button, self.pin_button]:
+            for button in [self.add_window_button, self.action_button, self.screenshot_button, self.pin_button]:
                 button.setEnabled(False)
             self.settings_button.setEnabled(True)
 
@@ -523,6 +559,46 @@ class MainMenuWindow(QMainWindow):
             self.stop_capture()
         else:
             self.start_capture()
+
+    def capture_screenshot(self):
+        subprocess.run(["screencapture", "-i", "screenshot.png"])
+
+        # 打开截图文件并转换为灰度图像
+        with Image.open("screenshot.png") as img:
+            img_gray = img.convert("L")
+            img_bytes = BytesIO()
+            img_gray.save(img_bytes, format="PNG")
+            image_data = img_bytes.getvalue()
+
+        # 使用Google Cloud Vision API進行文字辨識
+        image = vision_v1.Image(content=image_data)
+        response = client_vision.text_detection(image=image)
+        texts = response.text_annotations
+
+        # 提取辨識到的文字
+        if texts:
+            detected_text = texts[0].description
+
+            # 设置OCR识别文本
+            main_capturing_window.ocr_text_label.setText(detected_text)
+ 
+            # 將辨識的文字按行分割
+            lines = detected_text.replace("\n", "")
+
+            # Google 翻譯
+            target_language = "zh-TW"  # 將此替換為你想要的目標語言代碼（例如：英文 --> en, 繁體中文 --> zh-TW）
+            translated_lines = client_translate.translate(lines, target_language=target_language)
+
+            # Unescape HTML entities
+            unescape_translated_text = html.unescape(translated_lines["translatedText"])
+
+            # 將翻譯後的行重新組合成一個帶有換行的字符串
+            translated_text_with_newlines = unescape_translated_text.replace("。", "。\n").replace('？', '？\n').replace('！', '！\n')  # 以句點和問號為換行分界點
+            main_capturing_window.translation_text_label.setText(translated_text_with_newlines)
+            #main_capturing_window.translation_text_label.setText(unescape_translated_text)  # 完全不以句點和問號為換行分界點
+            
+        else:
+            pass
 
     def pin_on_top(self):
         if self.is_pined:
@@ -560,7 +636,7 @@ class MainMenuWindow(QMainWindow):
 
     def show_settings(self):
         # disabled all button
-        for button in [self.add_window_button, self.action_button, self.pin_button, self.settings_button]:
+        for button in [self.add_window_button, self.action_button, self.screenshot_button, self.pin_button, self.settings_button]:
             button.setEnabled(False)
 
         # main_window 切换成無框窗口
@@ -577,7 +653,7 @@ class MainMenuWindow(QMainWindow):
         self.settings_window.exec()
 
         # enabled all button
-        for button in [self.add_window_button, self.action_button, self.pin_button, self.settings_button]:
+        for button in [self.add_window_button, self.action_button, self.screenshot_button, self.pin_button, self.settings_button]:
             button.setEnabled(True)
 
         # main_window 切换成有框窗口
@@ -660,6 +736,7 @@ class MainMenuWindow(QMainWindow):
             self.screen_capture_window.start_capture()
 
             self.add_window_button.setEnabled(False)
+            self.screenshot_button.setEnabled(False)
             self.settings_button.setEnabled(False)
 
             # 移除screen_capture_window的最上层标志
@@ -702,6 +779,7 @@ class MainMenuWindow(QMainWindow):
             self.screen_capture_window.stop_capture()
 
             self.add_window_button.setEnabled(True)
+            self.screenshot_button.setEnabled(True)
             self.settings_button.setEnabled(True)
 
             # 恢复screen_capture_window的最上层标志
@@ -976,9 +1054,9 @@ class ScreenCaptureWindow(QMainWindow):
             unescape_translated_text = html.unescape(translated_lines["translatedText"])
 
             # 將翻譯後的行重新組合成一個帶有換行的字符串
-            translated_text_with_newlines = unescape_translated_text.replace("。", "。\n").replace('？', '？\n')  # 以句點和問號為換行分界點
+            translated_text_with_newlines = unescape_translated_text.replace("。", "。\n").replace('？', '？\n').replace('！', '！\n')  # 以句點和問號為換行分界點
             main_capturing_window.translation_text_label.setText(translated_text_with_newlines)
-            main_capturing_window.translation_text_label.setText(unescape_translated_text)  # 完全不以句點和問號為換行分界點
+            #main_capturing_window.translation_text_label.setText(unescape_translated_text)  # 完全不以句點和問號為換行分界點
             
         else:
             pass
