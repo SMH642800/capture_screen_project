@@ -561,10 +561,11 @@ class MainMenuWindow(QMainWindow):
             self.start_capture()
 
     def capture_screenshot(self):
-        subprocess.run(["screencapture", "-i", "screenshot.png"])
+        screenshot_path = os.path.join(self.app_dir, "screenshot.png")
+        subprocess.run(["screencapture", "-i", screenshot_path])
 
         # 打开截图文件并转换为灰度图像
-        with Image.open("screenshot.png") as img:
+        with Image.open(screenshot_path) as img:
             img_gray = img.convert("L")
             img_bytes = BytesIO()
             img_gray.save(img_bytes, format="PNG")
