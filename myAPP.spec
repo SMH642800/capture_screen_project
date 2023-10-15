@@ -20,7 +20,6 @@ a = Analysis(
       'PySide6.QtQml',
       'PySide6.QtQmlModels',
       'PySide6.QtQuick',
-      'PySide6.QtSvg',
       'PySide6.QtVirtualKeyboard'
     ],
     noarchive=False,

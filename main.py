@@ -85,6 +85,7 @@ class MainMenuWindow(QMainWindow):
         
         # Create a button to add the screen capture window
         self.add_window_button = QPushButton("", self)
+        self.add_window_button.setToolTip("新增螢幕擷取視窗")
         # 使用样式表自定义按钮的外观
         self.add_window_button.setStyleSheet(
             "QPushButton {"
@@ -116,6 +117,7 @@ class MainMenuWindow(QMainWindow):
 
         # Create a capturing button to start screen capture
         self.action_button = QPushButton("", self)
+        self.action_button.setToolTip("開始擷取畫面")
         self.action_button.setStyleSheet(
             "QPushButton {"
             "    background-color: rgba(0, 0, 0, 0);"
@@ -147,6 +149,7 @@ class MainMenuWindow(QMainWindow):
 
         # Create a button to pin the window on the toppest
         self.pin_button = QPushButton("", self)
+        self.pin_button.setToolTip("取消釘選")
         self.pin_button.setStyleSheet(
             "QPushButton {"
             "    background-color: rgba(0, 0, 0, 0);"
@@ -178,6 +181,7 @@ class MainMenuWindow(QMainWindow):
 
         # Create a button to open settings window
         self.settings_button = QPushButton("", self)
+        self.settings_button.setToolTip("設定")
         self.settings_button.setStyleSheet(
             "QPushButton {"
             "    background-color: rgba(0, 0, 0, 0);"
@@ -430,7 +434,8 @@ class MainMenuWindow(QMainWindow):
 
     def pin_on_top(self):
         if self.is_pined:
-            self.is_pined = False 
+            self.is_pined = False
+            self.pin_button.setToolTip("釘選在最上層")
 
             # set icon to pin_button (pin_diasabled)
             pin_icon_path = "img/ui/near_me_white_24dp.svg"
@@ -443,7 +448,8 @@ class MainMenuWindow(QMainWindow):
             self.setWindowFlag(Qt.WindowStaysOnTopHint, False)
             self.show()
         else:
-            self.is_pined = True 
+            self.is_pined = True
+            self.pin_button.setToolTip("取消釘選")
 
             # set icon to pin_button (pin_diasabled)
             pin_icon_path = "img/ui/near_me_disabled_white_24dp.svg"
@@ -542,6 +548,7 @@ class MainMenuWindow(QMainWindow):
     def start_capture(self):
         if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
             self.capturing = True 
+            self.action_button.setToolTip("停止擷取畫面")
 
             # set icon to action_button (stop capturing icon)
             action_icon_path = "img/ui/radio_button_checked_white_24dp.svg"
@@ -581,6 +588,7 @@ class MainMenuWindow(QMainWindow):
             self.capturing_system_state_timer.stop()
 
             self.capturing = False
+            self.action_button.setToolTip("開始擷取畫面")
 
             # set icon to action_button (stop capturing icon)
             action_icon_path = "img/ui/radio_button_unchecked_white_24dp.svg"
