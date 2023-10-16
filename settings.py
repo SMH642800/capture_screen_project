@@ -24,7 +24,7 @@ class SettingsWindow(QDialog):
             self.app_dir_path = sys._MEIPASS
         else:
             # 一般開發狀態
-            self.project_path = os.path.dirname(os.path.abspath(__file__))
+            self.app_dir_path = os.path.dirname(os.path.abspath(__file__))
 
         # 設定 setting window 字體大小
         self._font_size = 16
@@ -261,13 +261,7 @@ class SettingsWindow(QDialog):
         )
 
         # 創建如何取得google憑證連結
-        if getattr(sys, 'frozen', False):
-            # 應用程式打包狀態
-            current_directory = self.app_dir_path
-        else:
-            current_directory = self.project_path
-
-        new_file_path = os.path.join(current_directory, "sub-google-api.html")
+        new_file_path = os.path.join(self.app_dir_path, "sub-google-api.html")
         self.credentials_link = QLabel(f'<a href="file://{new_file_path}">如何取得 Google 憑證？</a>')
         self.credentials_link.setFont(font)    
         self.credentials_link.setStyleSheet(
@@ -304,14 +298,8 @@ class SettingsWindow(QDialog):
         author_label = QLabel("作者: Hsieh Meng-Hao")
 
         # 創建使用說明連結、Github連結
-        if getattr(sys, 'frozen', False):
-            # 應用程式打包狀態
-            current_directory = self.app_dir_path
-        else:
-            current_directory = self.project_path
-
-        manual_file_path = os.path.join(current_directory, "manual.html")
-        github_file_path = os.path.join(current_directory, "githublink.html")
+        manual_file_path = os.path.join(self.app_dir_path, "manual.html")
+        github_file_path = os.path.join(self.app_dir_path, "githublink.html")
         self.manual_link = QLabel(f'<a href="file://{manual_file_path}"><span> &lt; </span>使用說明<span> &gt; </span></a>')
         self.github_link = QLabel(f'<a href="file://{github_file_path}"><span> &lt; </span>GitHub<span> &gt; </span></a>')
         self.manual_link.setFont(label_font)
@@ -416,13 +404,7 @@ class SettingsWindow(QDialog):
                 credentials_file = selected_files[0]  # 获取第一个选择的文件
 
                 # 获取当前脚本所在的目录
-                if getattr(sys, 'frozen', False):
-                    # 應用程式打包狀態
-                    project_dir = self.app_dir_path
-                else:
-                    project_dir = self.project_path
-
-                new_file_path = os.path.join(project_dir, os.path.basename(credentials_file))
+                new_file_path = os.path.join(self.app_dir_path, os.path.basename(credentials_file))
                 
                 previous_file_path = self.config_handler.get_google_credential_path()
                 if os.path.exists(previous_file_path):
