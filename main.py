@@ -9,9 +9,9 @@ import subprocess
 import numpy as np 
 from io import BytesIO
 from PIL import ImageGrab, Image
-from PySide6.QtGui import QPalette, QColor, QFontMetrics, QIcon
+from PySide6.QtGui import QPalette, QColor, QFontMetrics, QIcon, QPixmap
 from PySide6.QtWidgets import QMainWindow, QMessageBox, QApplication, QPushButton, QHBoxLayout, QWidget, QScrollArea
-from PySide6.QtCore import Signal, QTimer, QProcess, QSize, Property, QObject, QEasingCurve, QPropertyAnimation
+from PySide6.QtCore import Signal, QTimer, QSize, Property, QObject, QEasingCurve, QPropertyAnimation
 from google.cloud import vision_v1
 from google.cloud import translate_v2 as translate
 from google.oauth2 import service_account
@@ -560,13 +560,18 @@ class MainMenuWindow(QMainWindow):
     def show_message_box(self):
         # 停止计时器
         self.timer.stop()
+
+        new_file_path = os.path.join(self.app_dir, "img/index/tataru_round.png")
+        customIcon = QPixmap(new_file_path)  # 加载图标
+
         # 创建消息框
         msg_box = QMessageBox()
-        msg_box.setWindowTitle("Information")
-        msg_box.setText("Welcome to this APP. \n"
-            "Please go to 'Settings' -> 'System' -> 'Set Google Credentials' "
-            "to configure Google credentials before using the app.")
-        msg_box.setIcon(QMessageBox.Information)
+        msg_box.setWindowTitle("Welcome ! ")
+        msg_box.setIconPixmap(customIcon)
+        msg_box.setText("歡迎使用「此應用程式」！ \n"
+            "\n在使用此應用程式之前，請先去「設定」  ➜  「系統」  ➜  「設定 Google 憑證」 "
+            "，上傳已申請的 Google 憑證。")
+
         # 设置消息框始终显示在最顶部
         msg_box.setWindowFlags(msg_box.windowFlags() | Qt.WindowStaysOnTopHint)
         # 显示消息框
@@ -1134,6 +1139,10 @@ if __name__ == "__main__":
 
     # Show the windows
     main_capturing_window.show()
+
+    # set application icon
+    # App.setWindowIcon(QIcon('tataru.icns'))
+    # main_capturing_window.setWindowIcon(QIcon('tataru.icns'))
     
     # start the app
     sys.exit(App.exec())

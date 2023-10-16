@@ -37,6 +37,7 @@ exe = EXE(
     strip=False,
     upx=True,
     console=False,
+    icon='tataru.icns',
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
@@ -54,7 +55,7 @@ coll = COLLECT(
 )
 app = BUNDLE(
     coll,
-    name='myAPP.app',
-    icon=None,
+    name='myTest.app',
+    icon='tataru.icns',
     bundle_identifier=None,
 )
