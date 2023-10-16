@@ -94,7 +94,7 @@ class ScalableButton(QPushButton):
 
     def onButtonPressed(self):
         # 鼠标按下按钮，缩小图标并更改为新图标（如果有）
-        self.animateIconSize(QSize(32, 32))
+        self.animateIconSize(QSize(28, 28))
         self.is_pressed = True
 
     def onButtonReleased(self):
@@ -168,6 +168,8 @@ class MainMenuWindow(QMainWindow):
         self.setGeometry(screen_geometry.x() + (screen_geometry.width() // 3) * 2, 
                          screen_geometry.y() + screen_geometry.height() // 4,
                          screen_geometry.width() // 5, screen_geometry.height() // 2.5)
+         # Set a fixed size
+        self.setFixedSize(screen_geometry.width() // 5, screen_geometry.height() // 2.5)
         
         # Create a button to add the screen capture window
         #self.add_window_button = QPushButton("", self)
@@ -564,42 +566,45 @@ class MainMenuWindow(QMainWindow):
         screenshot_path = os.path.join(self.app_dir, "screenshot.png")
         subprocess.run(["screencapture", "-i", screenshot_path])
 
-        # 打开截图文件并转换为灰度图像
-        with Image.open(screenshot_path) as img:
-            img_gray = img.convert("L")
-            img_bytes = BytesIO()
-            img_gray.save(img_bytes, format="PNG")
-            image_data = img_bytes.getvalue()
+        if os.path.exists(screenshot_path):
+            # 打开截图文件并转换为灰度图像
+            with Image.open(screenshot_path) as img:
+                img_gray = img.convert("L")
+                img_bytes = BytesIO()
+                img_gray.save(img_bytes, format="PNG")
+                image_data = img_bytes.getvalue()
 
-        # 使用Google Cloud Vision API進行文字辨識
-        image = vision_v1.Image(content=image_data)
-        response = client_vision.text_detection(image=image)
-        texts = response.text_annotations
+            # 使用Google Cloud Vision API進行文字辨識
+            image = vision_v1.Image(content=image_data)
+            response = client_vision.text_detection(image=image)
+            texts = response.text_annotations
 
-        # 提取辨識到的文字
-        if texts:
-            detected_text = texts[0].description
+            # 提取辨識到的文字
+            if texts:
+                detected_text = texts[0].description
 
-            # 设置OCR识别文本
-            main_capturing_window.ocr_text_label.setText(detected_text)
- 
-            # 將辨識的文字按行分割
-            lines = detected_text.replace("\n", "")
+                # 设置OCR识别文本
+                main_capturing_window.ocr_text_label.setText(detected_text)
+    
+                # 將辨識的文字按行分割
+                lines = detected_text.replace("\n", "")
 
-            # Google 翻譯
-            target_language = "zh-TW"  # 將此替換為你想要的目標語言代碼（例如：英文 --> en, 繁體中文 --> zh-TW）
-            translated_lines = client_translate.translate(lines, target_language=target_language)
+                # Google 翻譯
+                target_language = "zh-TW"  # 將此替換為你想要的目標語言代碼（例如：英文 --> en, 繁體中文 --> zh-TW）
+                translated_lines = client_translate.translate(lines, target_language=target_language)
 
-            # Unescape HTML entities
-            unescape_translated_text = html.unescape(translated_lines["translatedText"])
+                # Unescape HTML entities
+                unescape_translated_text = html.unescape(translated_lines["translatedText"])
 
-            # 將翻譯後的行重新組合成一個帶有換行的字符串
-            translated_text_with_newlines = unescape_translated_text.replace("。", "。\n").replace('？', '？\n').replace('！', '！\n')  # 以句點和問號為換行分界點
-            main_capturing_window.translation_text_label.setText(translated_text_with_newlines)
-            #main_capturing_window.translation_text_label.setText(unescape_translated_text)  # 完全不以句點和問號為換行分界點
-            
-        else:
-            pass
+                # 將翻譯後的行重新組合成一個帶有換行的字符串
+                translated_text_with_newlines = unescape_translated_text.replace("。", "。\n").replace('？', '？\n').replace('！', '！\n')  # 以句點和問號為換行分界點
+                main_capturing_window.translation_text_label.setText(translated_text_with_newlines)
+                #main_capturing_window.translation_text_label.setText(unescape_translated_text)  # 完全不以句點和問號為換行分界點
+            else:
+                pass
+
+            # delete screenshot image
+            os.remove(screenshot_path)
 
     def pin_on_top(self):
         if self.is_pined:
