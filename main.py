@@ -913,7 +913,7 @@ class ScreenCaptureWindow(QMainWindow):
         self.previous_image = None
   
         # set the title
-        self.setWindowTitle("Screen Capture region")
+        self.setWindowTitle("擷取視窗")
 
         # Set the window background color to black
         capture_window_palette = QPalette()
