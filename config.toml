@@ -1,5 +1,5 @@
 [Settings]
-text_font_size = 12
+text_font_size = 16
 text_font_color = "#FFFFFF"
 capture_frequency = "標準 (2 秒)"
-google_cloud_key_file_path = "/Users/menghao/test/manifest-surfer-400014-b04707cc60d4.json"
+google_cloud_key_file_path = "/Users/menghao/test_project/manifest-surfer-400014-b04707cc60d4.json"
