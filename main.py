@@ -282,20 +282,15 @@ class MainMenuWindow(QMainWindow):
         self.pin_button.setToolTip("取消釘選")
         self.pin_button.setStyleSheet(
             "QPushButton {"
-            "    background-color: rgba(0, 0, 0, 0);"
-            "    color: rgb(58, 134, 255);"
-            #"    border: 2px solid rgb(58, 134, 255);"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #3879E3, stop: 1 #2D66EA);"
+            #"    background-color: rgba(0, 0, 0, 0);"
             "    border-radius: 8px;"
             "}"
             "QPushButton:hover {"
             "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #488EF7, stop: 1 #3478F6);"
-            "    border: none;"
-            "    color: white;"
             "}"
             "QPushButton:pressed {"
             "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #3879E3, stop: 1 #2D66EA);"
-            "    border: none;"
-            "    color: white;"
             "}"
         )
 
@@ -645,6 +640,18 @@ class MainMenuWindow(QMainWindow):
             new_file_path = os.path.join(self.app_dir, "img/ui/pin_button_enable.png")
             self.pin_button.createIcon(new_file_path)
             self.pin_button.setToolTip("釘選在最上層")
+            self.pin_button.setStyleSheet(
+                "QPushButton {"
+                "    background-color: rgba(0, 0, 0, 0);"
+                "    border-radius: 8px;"
+                "}"
+                "QPushButton:hover {"
+                "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #488EF7, stop: 1 #3478F6);"
+                "}"
+                "QPushButton:pressed {"
+                "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #3879E3, stop: 1 #2D66EA);"
+                "}"
+            )
 
             # set icon to pin_button (pin_diasabled)
             # pin_icon_path = "img/ui/near_me_white_24dp.svg"
@@ -661,6 +668,18 @@ class MainMenuWindow(QMainWindow):
             new_file_path = os.path.join(self.app_dir, "img/ui/pin_button_disable.png")
             self.pin_button.createIcon(new_file_path)
             self.pin_button.setToolTip("取消釘選")
+            self.pin_button.setStyleSheet(
+                "QPushButton {"
+                "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #3879E3, stop: 1 #2D66EA);"
+                "    border-radius: 8px;"
+                "}"
+                "QPushButton:hover {"
+                "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #488EF7, stop: 1 #3478F6);"
+                "}"
+                "QPushButton:pressed {"
+                "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #3879E3, stop: 1 #2D66EA);"
+                "}"
+            )
 
             # set icon to pin_button (pin_diasabled)
             # pin_icon_path = "img/ui/near_me_disabled_white_24dp.svg"
