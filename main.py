@@ -173,7 +173,7 @@ class MainMenuWindow(QMainWindow):
         
         # Create a button to add the screen capture window
         #self.add_window_button = QPushButton("", self)
-        new_file_path = os.path.join(self.app_dir, "img/ui/desktop_windows_white_24dp.svg")
+        new_file_path = os.path.join(self.app_dir, "img/ui/add_capture_window.png")
         self.add_window_button = ScalableButton("add_window_button", new_file_path)
         self.add_window_button.setToolTip("新增螢幕擷取視窗")
         # 使用样式表自定义按钮的外观
@@ -201,13 +201,13 @@ class MainMenuWindow(QMainWindow):
         # add_capture_window_icon = QIcon(add_capture_window_path)
         # self.add_window_button.setIcon(add_capture_window_icon)
         # self.add_window_button.setIconSize(QSize(32, 32))  # Scale the icon size
-        self.add_window_button.setMinimumSize(45, 45)  # Set the minimum size for the button to ensure the icon fits
+        self.add_window_button.setMinimumSize(44, 44)  # Set the minimum size for the button to ensure the icon fits
 
         self.add_window_button.clicked.connect(self.add_or_check_screen_capture_window)
 
         # Create a capturing button to start screen capture
         #self.action_button = QPushButton("", self)
-        new_file_path = os.path.join(self.app_dir, "img/ui/radio_button_unchecked_white_24dp.svg")
+        new_file_path = os.path.join(self.app_dir, "img/ui/record_button_start.svg")
         self.action_button = ScalableButton("action_button", new_file_path)
         self.action_button.setToolTip("開始擷取畫面")
         self.action_button.setStyleSheet(
@@ -234,13 +234,13 @@ class MainMenuWindow(QMainWindow):
         # action_icon = QIcon(action_icon_path)
         # self.action_button.setIcon(action_icon)
         # self.action_button.setIconSize(QSize(32, 32))  # Scale the icon size
-        self.action_button.setMinimumSize(45, 45)  # Set the minimum size for the button to ensure the icon fits
+        self.action_button.setMinimumSize(44, 44)  # Set the minimum size for the button to ensure the icon fits
 
         self.action_button.clicked.connect(self.toggle_capture)
         self.capturing = False  # Track capturing state
 
         # Create a button to capture the screenshot
-        new_file_path = os.path.join(self.app_dir, "img/ui/screenshot_monitor_white_24dp.svg")
+        new_file_path = os.path.join(self.app_dir, "img/ui/screenshot_button.png")
         self.screenshot_button = ScalableButton("add_window_button", new_file_path)
         self.screenshot_button.setToolTip("螢幕截圖")
         # 使用样式表自定义按钮的外观
@@ -268,13 +268,16 @@ class MainMenuWindow(QMainWindow):
         # add_capture_window_icon = QIcon(add_capture_window_path)
         # self.add_window_button.setIcon(add_capture_window_icon)
         # self.add_window_button.setIconSize(QSize(32, 32))  # Scale the icon size
-        self.screenshot_button.setMinimumSize(45, 45)  # Set the minimum size for the button to ensure the icon fits
+        self.screenshot_button.setMinimumSize(44, 44)  # Set the minimum size for the button to ensure the icon fits
 
-        self.screenshot_button.clicked.connect(self.capture_screenshot)
+        # set timer for delay process the capture_screenshot function
+        self.screenshot_timer = QTimer(self)
+        self.screenshot_timer.timeout.connect(self.capture_screenshot)
+        self.screenshot_button.clicked.connect(self.delayed_process_screenshot_function)
 
         # Create a button to pin the window on the toppest
         # self.pin_button = QPushButton("", self)
-        new_file_path = os.path.join(self.app_dir, "img/ui/near_me_disabled_white_24dp.svg")
+        new_file_path = os.path.join(self.app_dir, "img/ui/pin_button_disable.png")
         self.pin_button = ScalableButton("pin_button", new_file_path)
         self.pin_button.setToolTip("取消釘選")
         self.pin_button.setStyleSheet(
@@ -301,14 +304,14 @@ class MainMenuWindow(QMainWindow):
         # pin_icon = QIcon(pin_icon_path)
         # self.pin_button.setIcon(pin_icon)
         # self.pin_button.setIconSize(QSize(32, 32))  # Scale the icon size
-        self.pin_button.setMinimumSize(45, 45)  # Set the minimum size for the button to ensure the icon fits
+        self.pin_button.setMinimumSize(44, 44)  # Set the minimum size for the button to ensure the icon fits
 
         self.pin_button.clicked.connect(self.pin_on_top)
         self.is_pined = True  # Track pining state
 
         # Create a button to open settings window
         # self.settings_button = QPushButton("", self)
-        new_file_path = os.path.join(self.app_dir, "img/ui/settings_white_24dp.svg")
+        new_file_path = os.path.join(self.app_dir, "img/ui/settings_button.svg")
         self.settings_button = ScalableButton("settings_button", new_file_path)
         self.settings_button.setToolTip("設定")
         self.settings_button.setStyleSheet(
@@ -335,7 +338,7 @@ class MainMenuWindow(QMainWindow):
         # settings_icon = QIcon(settings_icon_path)
         # self.settings_button.setIcon(settings_icon)
         # self.settings_button.setIconSize(QSize(32, 32))  # Scale the icon size
-        self.settings_button.setMinimumSize(45, 45)  # Set the minimum size for the button to ensure the icon fits
+        self.settings_button.setMinimumSize(44, 44)  # Set the minimum size for the button to ensure the icon fits
 
         # connect button to show_settings funciton
         self.settings_button.clicked.connect(self.show_settings)
@@ -584,7 +587,15 @@ class MainMenuWindow(QMainWindow):
         else:
             self.start_capture()
 
+    def delayed_process_screenshot_function(self):
+        # start timer to delay process the screenshot function
+        self.screenshot_timer.start(300)  # delay 0.3 seconds
+
     def capture_screenshot(self):
+        # stop screenshot_timer
+        self.screenshot_timer.stop()
+
+        # get screenshot_path
         screenshot_path = os.path.join(self.app_dir, "screenshot.png")
         subprocess.run(["screencapture", "-i", screenshot_path])
 
@@ -631,7 +642,7 @@ class MainMenuWindow(QMainWindow):
     def pin_on_top(self):
         if self.is_pined:
             self.is_pined = False
-            new_file_path = os.path.join(self.app_dir, "img/ui/near_me_white_24dp.svg")
+            new_file_path = os.path.join(self.app_dir, "img/ui/pin_button_enable.png")
             self.pin_button.createIcon(new_file_path)
             self.pin_button.setToolTip("釘選在最上層")
 
@@ -647,7 +658,7 @@ class MainMenuWindow(QMainWindow):
             self.show()
         else:
             self.is_pined = True
-            new_file_path = os.path.join(self.app_dir, "img/ui/near_me_disabled_white_24dp.svg")
+            new_file_path = os.path.join(self.app_dir, "img/ui/pin_button_disable.png")
             self.pin_button.createIcon(new_file_path)
             self.pin_button.setToolTip("取消釘選")
 
@@ -748,7 +759,7 @@ class MainMenuWindow(QMainWindow):
     def start_capture(self):
         if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
             self.capturing = True 
-            new_file_path = os.path.join(self.app_dir, "img/ui/radio_button_checked_white_24dp.svg")
+            new_file_path = os.path.join(self.app_dir, "img/ui/record_button_stop.png")
             self.action_button.createIcon(new_file_path)
             self.action_button.setToolTip("停止擷取畫面")
 
@@ -791,7 +802,7 @@ class MainMenuWindow(QMainWindow):
             self.capturing_system_state_timer.stop()
 
             self.capturing = False
-            new_file_path = os.path.join(self.app_dir, "img/ui/radio_button_unchecked_white_24dp.svg")
+            new_file_path = os.path.join(self.app_dir, "img/ui/record_button_start.svg")
             self.action_button.createIcon(new_file_path)
             self.action_button.setToolTip("開始擷取畫面")
 
