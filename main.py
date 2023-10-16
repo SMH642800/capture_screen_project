@@ -367,7 +367,7 @@ class MainMenuWindow(QMainWindow):
         self.line.setLineWidth(1)  # 設置線條寬度為 2px
 
         # 创建用于显示OCR识别文本的QLabel
-        self.ocr_label = QLabel("OCR Recognized Text:", self)
+        self.ocr_label = QLabel("  原 文：", self)
         self.ocr_label.setAutoFillBackground(False)  # 设置背景颜色為透明
         self.ocr_label.setStyleSheet("color: white;")  # 設置文字顏色為白色
         self.ocr_text_label = QLabel("", self)
@@ -386,7 +386,7 @@ class MainMenuWindow(QMainWindow):
         ocr_scroll_area.setWidget(self.ocr_text_label)
 
         # 创建用于显示翻译后文本的QLabel
-        self.translation_label = QLabel("Translation:", self)
+        self.translation_label = QLabel("  翻 譯：", self)
         self.translation_label.setStyleSheet("color: white;")  # 設置文字顏色為白色
         self.translation_label.setAutoFillBackground(False)  # 设置背景颜色為透明
         self.translation_text_label = QLabel("", self)
