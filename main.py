@@ -10,7 +10,7 @@ import numpy as np
 from io import BytesIO
 from PIL import ImageGrab, Image
 from PySide6.QtGui import QPalette, QColor, QFontMetrics, QIcon
-from PySide6.QtWidgets import QMainWindow, QMessageBox, QApplication, QPushButton, QHBoxLayout, QWidget
+from PySide6.QtWidgets import QMainWindow, QMessageBox, QApplication, QPushButton, QHBoxLayout, QWidget, QScrollArea
 from PySide6.QtCore import Signal, QTimer, QProcess, QSize, Property, QObject, QEasingCurve, QPropertyAnimation
 from google.cloud import vision_v1
 from google.cloud import translate_v2 as translate
@@ -168,8 +168,8 @@ class MainMenuWindow(QMainWindow):
         self.setGeometry(screen_geometry.x() + (screen_geometry.width() // 3) * 2, 
                          screen_geometry.y() + screen_geometry.height() // 4,
                          screen_geometry.width() // 5, screen_geometry.height() // 2.5)
-         # Set a fixed size
-        self.setFixedSize(screen_geometry.width() // 5, screen_geometry.height() // 2.5)
+        # Set a fixed size
+        # self.setFixedSize(screen_geometry.width() // 5, screen_geometry.height() // 2.5)
         
         # Create a button to add the screen capture window
         #self.add_window_button = QPushButton("", self)
@@ -373,6 +373,15 @@ class MainMenuWindow(QMainWindow):
         self.ocr_text_label.setContentsMargins(10, 10, 10, 10)  # 設置距離最左、最右、最上、最下的內邊距為 10px
         self.ocr_text_label.setWordWrap(True)  # 启用自动换行
 
+        # Create a scroll area
+        ocr_scroll_area = QScrollArea()
+        ocr_scroll_area.setWidgetResizable(True)
+        # Remove the frame/border
+        ocr_scroll_area.setFrameShape(QScrollArea.NoFrame)
+        
+        # Set the label as the widget for the scroll area
+        ocr_scroll_area.setWidget(self.ocr_text_label)
+
         # 创建用于显示翻译后文本的QLabel
         self.translation_label = QLabel("Translation:", self)
         self.translation_label.setStyleSheet("color: white;")  # 設置文字顏色為白色
@@ -381,7 +390,18 @@ class MainMenuWindow(QMainWindow):
         self.translation_text_label.setAutoFillBackground(True)  # 允许设置背景颜色
         self.translation_text_label.setStyleSheet("background-color: rgb(50, 50, 50); border-radius: 10px;")
         self.translation_text_label.setContentsMargins(10, 10, 10, 10)  # 設置距離最左、最右、最上、最下的內邊距為 10px
+        # self.translation_text_label.setMinimumWidth((screen_geometry.width() // 5) - 40)  # 设置最小宽度为 200 像素
         self.translation_text_label.setWordWrap(True)  # 启用自动换行
+
+        # Create a scroll area
+        transaltion_scroll_area = QScrollArea()
+        transaltion_scroll_area.setWidgetResizable(True)
+
+        # Remove the frame/border
+        transaltion_scroll_area.setFrameShape(QScrollArea.NoFrame)
+        
+        # Set the label as the widget for the scroll area
+        transaltion_scroll_area.setWidget(self.translation_text_label)
 
         # 設置 ocr_lable 和 ocr_translation_label 的字體大小與粗細度
         font = QFont()
@@ -409,8 +429,8 @@ class MainMenuWindow(QMainWindow):
         self.system_state.setFixedHeight(state_label_height)
 
         # 创建一个QPalette对象来设置 OCR_result_text 的背景及文字颜色
-        self.text_label_palette = QPalette()
-        self.text_label_palette.setColor(QPalette.Window, QColor(50, 50, 50))  # 设置背景颜色为浅灰色
+        # self.text_label_palette = QPalette()
+        # self.text_label_palette.setColor(QPalette.Window, QColor(50, 50, 50))  # 设置背景颜色为浅灰色
 
         # 讀取 config file 中的 text_font_size
         text_font_size = self.config_handler.get_font_size()
@@ -459,9 +479,11 @@ class MainMenuWindow(QMainWindow):
 
         # Add ocr_label and translation_label to the layout
         layout.addWidget(self.ocr_label)
-        layout.addWidget(self.ocr_text_label)
+        layout.addWidget(ocr_scroll_area)
+        # layout.addWidget(self.ocr_text_label)
         layout.addWidget(self.translation_label)
-        layout.addWidget(self.translation_text_label)
+        layout.addWidget(transaltion_scroll_area)
+        # layout.addWidget(self.translation_text_label)
 
         # Create a QWidget as a container for the layout
         widget = QWidget(self)
@@ -584,7 +606,7 @@ class MainMenuWindow(QMainWindow):
                 detected_text = texts[0].description
 
                 # 设置OCR识别文本
-                main_capturing_window.ocr_text_label.setText(detected_text)
+                self.ocr_text_label.setText(detected_text)
     
                 # 將辨識的文字按行分割
                 lines = detected_text.replace("\n", "")
@@ -598,12 +620,12 @@ class MainMenuWindow(QMainWindow):
 
                 # 將翻譯後的行重新組合成一個帶有換行的字符串
                 translated_text_with_newlines = unescape_translated_text.replace("。", "。\n").replace('？', '？\n').replace('！', '！\n')  # 以句點和問號為換行分界點
-                main_capturing_window.translation_text_label.setText(translated_text_with_newlines)
+                self.translation_text_label.setText(translated_text_with_newlines)
                 #main_capturing_window.translation_text_label.setText(unescape_translated_text)  # 完全不以句點和問號為換行分界點
             else:
                 pass
 
-            # delete screenshot image
+            # delete screenshot image after ocr complete
             os.remove(screenshot_path)
 
     def pin_on_top(self):
