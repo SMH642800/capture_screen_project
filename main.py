@@ -773,7 +773,16 @@ class MainMenuWindow(QMainWindow):
     def add_or_check_screen_capture_window(self):
         # Check if a screen capture window is already open
         if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
-            QMessageBox.warning(self, "Warning", "You already have the Screen Capture Window open.")
+            # read messagebox warning icon
+            new_file_path = os.path.join(self.app_dir, "img/messagebox/warning.png")
+            customIcon = QPixmap(new_file_path)  # 加载图标
+
+            # 创建消息框
+            msg_box = QMessageBox()
+            msg_box.setWindowTitle("Warning")
+            msg_box.setIconPixmap(customIcon)
+            msg_box.setText("你已經開啟擷取視窗！")
+            msg_box.exec()
         else:
             # Create and show the screen capture window
             self.screen_capture_window = ScreenCaptureWindow()
@@ -810,7 +819,16 @@ class MainMenuWindow(QMainWindow):
             self.update_system_state()
             self.capturing_system_state_timer.start(1000) # 每 1 秒更新一次 system_state_label 顯示狀態
         else:
-            QMessageBox.warning(self, "Warning", "You haven't opened the Screen Capture Window yet.")
+            # read messagebox warning icon
+            new_file_path = os.path.join(self.app_dir, "img/messagebox/warning.png")
+            customIcon = QPixmap(new_file_path)  # 加载图标
+
+            # 创建消息框
+            msg_box = QMessageBox()
+            msg_box.setWindowTitle("Warning")
+            msg_box.setIconPixmap(customIcon)
+            msg_box.setText("你尚未開啟擷取視窗！")
+            msg_box.exec()
 
     def update_system_state(self):
         if self.system_state_flag:
@@ -979,8 +997,16 @@ class ScreenCaptureWindow(QMainWindow):
 
     def stop_capture(self):
         self.timer.stop()
-        #self.force_update_timer.stop()
-        QMessageBox.information(self, "Info", "Screen capture stopped.")
+
+        new_file_path = os.path.join(self.app_dir, "img/messagebox/info.png")
+        customIcon = QPixmap(new_file_path)  # 加载图标
+
+        # 创建消息框
+        msg_box = QMessageBox()
+        msg_box.setWindowTitle("Info")
+        msg_box.setIconPixmap(customIcon)
+        msg_box.setText("已停止擷取！")
+        msg_box.exec()
 
         # 恢复窗口透明度和边界线条
         self.setWindowOpacity(0.7)
