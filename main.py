@@ -690,7 +690,7 @@ class MainMenuWindow(QMainWindow):
                 detected_text = texts[0].description
 
                 # 设置OCR识别文本
-                self.ocr_text_label.setText(detected_text)
+                self.ocr_text_label.setText(f'{detected_text}')
     
                 # 將辨識的文字按行分割
                 lines = detected_text.replace("\n", "")
@@ -705,7 +705,7 @@ class MainMenuWindow(QMainWindow):
                 # 將翻譯後的行重新組合成一個帶有換行的字符串
                 translated_text_with_newlines = unescape_translated_text.replace("。", "。\n").replace('？', '？\n').replace('！', '！\n')  # 以句點和問號為換行分界點
                 # self.translation_text_label.setText(translated_text_with_newlines)
-                self.translation_text_label.setText(unescape_translated_text)  # 完全不以句點和問號為換行分界點
+                self.translation_text_label.setText(f'{unescape_translated_text}')  # 完全不以句點和問號為換行分界點
             else:
                 pass
 
@@ -1220,7 +1220,7 @@ class ScreenCaptureWindow(QMainWindow):
             detected_text = texts[0].description
 
             # 设置OCR识别文本
-            main_capturing_window.ocr_text_label.setText(detected_text)
+            main_capturing_window.ocr_text_label.setText(f'{detected_text}')
  
             # 將辨識的文字按行分割
             lines = detected_text.replace("\n", "")
@@ -1235,7 +1235,7 @@ class ScreenCaptureWindow(QMainWindow):
             # 將翻譯後的行重新組合成一個帶有換行的字符串
             translated_text_with_newlines = unescape_translated_text.replace("。", "。\n").replace('？', '？\n').replace('！', '！\n')  # 以句點和問號為換行分界點
             # main_capturing_window.translation_text_label.setText(translated_text_with_newlines)
-            main_capturing_window.translation_text_label.setText(unescape_translated_text)  # 完全不以句點和問號為換行分界點
+            main_capturing_window.translation_text_label.setText(f'{unescape_translated_text}')  # 完全不以句點和問號為換行分界點
         else:
             pass
 
