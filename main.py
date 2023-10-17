@@ -4,6 +4,7 @@ import io
 import os
 import sys
 import cv2
+import time
 import html
 import subprocess
 import numpy as np 
@@ -587,7 +588,35 @@ class MainMenuWindow(QMainWindow):
         else:
             self.start_capture()
 
+    def minimize_all_open_windows(self):
+        # minimize the main window
+        # self.showMinimized()
+        # 設定窗口標誌，使其保持在最下層
+        self.setWindowFlags(Qt.WindowStaysOnBottomHint)
+
+        # check if a screen capture window is already open
+        if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
+            # minimize the screen capture window
+            # self.screen_capture_window.showMinimized()
+            self.screen_capture_window.setWindowFlags(Qt.WindowStaysOnBottomHint)
+
+    def restore_all_windows(self):
+        # restore the main window after capturing the screenshot
+        self.showNormal()
+        if self.is_pined:
+            self.setWindowFlags(Qt.WindowStaysOnTopHint)
+        self.show()
+
+        # check if a screen capture window is already open
+        if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
+            # restore the screen capture window after capturing the screenshot
+            self.screen_capture_window.showNormal()
+            self.screen_capture_window.setWindowFlags(Qt.WindowStaysOnTopHint)
+            self.screen_capture_window.show()
+
     def delayed_process_screenshot_function(self):
+        self.minimize_all_open_windows()
+
         # start timer to delay process the screenshot function
         self.screenshot_timer.start(300)  # delay 0.3 seconds
 
@@ -598,6 +627,8 @@ class MainMenuWindow(QMainWindow):
         # get screenshot_path
         screenshot_path = os.path.join(self.app_dir, "screenshot.png")
         subprocess.run(["screencapture", "-i", screenshot_path])
+
+        self.restore_all_windows()
 
         if os.path.exists(screenshot_path):
             # 打开截图文件并转换为灰度图像
