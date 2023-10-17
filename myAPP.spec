@@ -55,7 +55,7 @@ coll = COLLECT(
 )
 app = BUNDLE(
     coll,
-    name='myTest.app',
+    name='myAppTest.app',
     icon='tataru.icns',
     bundle_identifier=None,
 )
