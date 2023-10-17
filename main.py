@@ -545,12 +545,18 @@ class MainMenuWindow(QMainWindow):
                     button.setEnabled(False)
                 self.settings_button.setEnabled(True)
         else:
-            # 設置 google_credential_label
-            self.google_credential_state.setText("Google 憑證： <font color='red'>無設置憑證</font> ")
+            # set timer for messagebox delayed show
+            self.timer = QTimer(self)
+            self.timer.timeout.connect(self.show_message_box)
+            self.delayed_show_message_box()
 
             # set only setting button enabled
             for button in [self.add_window_button, self.action_button, self.screenshot_button, self.pin_button]:
                 button.setEnabled(False)
+
+            # 設置 google_credential_label
+            self.google_credential_state.setText("Google 憑證： <font color='red'>無設置憑證</font> ")
+
             self.settings_button.setEnabled(True)
 
     def delayed_show_message_box(self):
@@ -569,7 +575,7 @@ class MainMenuWindow(QMainWindow):
         msg_box.setWindowTitle("Welcome ! ")
         msg_box.setIconPixmap(customIcon)
         msg_box.setText("歡迎使用「此應用程式」！ \n"
-            "\n在使用此應用程式之前，請先去「設定」  ➜  「系統」  ➜  「設定 Google 憑證」 "
+            "\n在使用此應用程式之前，請至 【設定】 > 【系統】 > 【設置 Google 憑證】"
             "，上傳已申請的 Google 憑證。")
 
         # 设置消息框始终显示在最顶部
@@ -661,8 +667,8 @@ class MainMenuWindow(QMainWindow):
 
                 # 將翻譯後的行重新組合成一個帶有換行的字符串
                 translated_text_with_newlines = unescape_translated_text.replace("。", "。\n").replace('？', '？\n').replace('！', '！\n')  # 以句點和問號為換行分界點
-                self.translation_text_label.setText(translated_text_with_newlines)
-                #main_capturing_window.translation_text_label.setText(unescape_translated_text)  # 完全不以句點和問號為換行分界點
+                # self.translation_text_label.setText(translated_text_with_newlines)
+                self.translation_text_label.setText(unescape_translated_text)  # 完全不以句點和問號為換行分界點
             else:
                 pass
 
@@ -695,9 +701,14 @@ class MainMenuWindow(QMainWindow):
             # self.pin_button.setIconSize(QSize(32, 32))  # Scale the icon size
             # self.pin_button.setMinimumSize(40, 40)  # Set the minimum size for the button to ensure the icon fits
 
-            # 移除screen_capture_window的最上层标志
+            # 移除main_window的最上层标志
             self.setWindowFlag(Qt.WindowStaysOnTopHint, False)
             self.show()
+
+            # 如果screen_capture_window存在, 一併移除最上層標誌
+            if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
+                self.screen_capture_window.setWindowFlag(Qt.WindowStaysOnTopHint, False)
+                self.screen_capture_window.show()
         else:
             self.is_pined = True
             new_file_path = os.path.join(self.app_dir, "img/ui/pin_button_disable.png")
@@ -723,9 +734,14 @@ class MainMenuWindow(QMainWindow):
             # self.pin_button.setIconSize(QSize(32, 32))  # Scale the icon size
             # self.pin_button.setMinimumSize(40, 40)  # Set the minimum size for the button to ensure the icon fits
 
-            # 恢复screen_capture_window的最上层标志
+            # 恢复main_window的最上层标志
             self.setWindowFlag(Qt.WindowStaysOnTopHint)
             self.show()
+
+            # 如果screen_capture_window存在, 一併恢復最上層標誌
+            if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
+                self.screen_capture_window.setWindowFlags(Qt.WindowStaysOnTopHint)
+                self.screen_capture_window.show()
 
     def show_settings(self):
         # disabled all button
@@ -803,6 +819,9 @@ class MainMenuWindow(QMainWindow):
     def add_or_check_screen_capture_window(self):
         # Check if a screen capture window is already open
         if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
+            # 将最小化的窗口恢复到正常状态
+            self.screen_capture_window.showNormal()
+
             # read messagebox warning icon
             new_file_path = os.path.join(self.app_dir, "img/messagebox/warning.png")
             customIcon = QPixmap(new_file_path)  # 加载图标
@@ -1174,9 +1193,8 @@ class ScreenCaptureWindow(QMainWindow):
 
             # 將翻譯後的行重新組合成一個帶有換行的字符串
             translated_text_with_newlines = unescape_translated_text.replace("。", "。\n").replace('？', '？\n').replace('！', '！\n')  # 以句點和問號為換行分界點
-            main_capturing_window.translation_text_label.setText(translated_text_with_newlines)
-            #main_capturing_window.translation_text_label.setText(unescape_translated_text)  # 完全不以句點和問號為換行分界點
-            
+            # main_capturing_window.translation_text_label.setText(translated_text_with_newlines)
+            main_capturing_window.translation_text_label.setText(unescape_translated_text)  # 完全不以句點和問號為換行分界點
         else:
             pass
 
