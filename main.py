@@ -610,7 +610,7 @@ class MainMenuWindow(QMainWindow):
         # check if a screen capture window is already open
         if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
             # restore the screen capture window after capturing the screenshot
-            self.screen_capture_window.showNormal()
+            # self.screen_capture_window.showNormal()
             self.screen_capture_window.setWindowFlags(Qt.WindowStaysOnTopHint)
             self.screen_capture_window.show()
 
