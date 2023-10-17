@@ -410,6 +410,7 @@ class MainMenuWindow(QMainWindow):
         ocr_scroll_area.setWidgetResizable(True)
         # Remove the frame/border
         ocr_scroll_area.setFrameShape(QScrollArea.NoFrame)
+        ocr_scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         
         # Set the label as the widget for the scroll area
         ocr_scroll_area.setWidget(self.ocr_text_label)
@@ -431,6 +432,7 @@ class MainMenuWindow(QMainWindow):
 
         # Remove the frame/border
         transaltion_scroll_area.setFrameShape(QScrollArea.NoFrame)
+        transaltion_scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         
         # Set the label as the widget for the scroll area
         transaltion_scroll_area.setWidget(self.translation_text_label)
