@@ -897,9 +897,8 @@ class MainMenuWindow(QMainWindow):
 
             self.screen_capture_window.start_capture()
 
-            self.add_window_button.setEnabled(False)
-            self.screenshot_button.setEnabled(False)
-            self.settings_button.setEnabled(False)
+            for button in [self.add_window_button, self.screenshot_button, self.pin_button, self.clear_text_button, self.settings_button]:
+                button.setEnabled(False)
 
             # 移除screen_capture_window的最上层标志
             self.screen_capture_window.setWindowFlag(Qt.WindowStaysOnTopHint, False)
@@ -949,9 +948,8 @@ class MainMenuWindow(QMainWindow):
 
             self.screen_capture_window.stop_capture()
 
-            self.add_window_button.setEnabled(True)
-            self.screenshot_button.setEnabled(True)
-            self.settings_button.setEnabled(True)
+            for button in [self.add_window_button, self.screenshot_button, self.pin_button, self.clear_text_button, self.settings_button]:
+                button.setEnabled(True)
 
             # 恢复screen_capture_window的最上层标志
             self.screen_capture_window.setWindowFlag(Qt.WindowStaysOnTopHint)
