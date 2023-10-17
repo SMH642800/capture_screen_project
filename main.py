@@ -304,6 +304,40 @@ class MainMenuWindow(QMainWindow):
         self.pin_button.clicked.connect(self.pin_on_top)
         self.is_pined = True  # Track pining state
 
+        # Create a button to clear label text
+        # self.settings_button = QPushButton("", self)
+        new_file_path = os.path.join(self.app_dir, "img/ui/delete_button.svg")
+        self.clear_text_button = ScalableButton("clear_text_button", new_file_path)
+        self.clear_text_button.setToolTip("清空文本")
+        self.clear_text_button.setStyleSheet(
+            "QPushButton {"
+            "    background-color: rgba(0, 0, 0, 0);"
+            # "    color: rgb(58, 134, 255);"
+            #"    border: 2px solid rgb(58, 134, 255);"
+            "    border-radius: 8px;"
+            "}"
+            "QPushButton:hover {"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #EB6777, stop: 1 #E63F46);"
+            "    border: none;"
+            "    color: white;"
+            "}"
+            "QPushButton:pressed {"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6E2C35, stop: 1 #6D181A);"
+            "    border: none;"
+            "    color: white;"
+            "}"
+        )
+
+        # set icon to settings_button
+        # settings_icon_path = "img/ui/settings_white_24dp.svg"
+        # settings_icon = QIcon(settings_icon_path)
+        # self.settings_button.setIcon(settings_icon)
+        # self.settings_button.setIconSize(QSize(32, 32))  # Scale the icon size
+        self.clear_text_button.setMinimumSize(44, 44)  # Set the minimum size for the button to ensure the icon fits
+
+        # connect button to show_settings funciton
+        self.clear_text_button.clicked.connect(self.clear_label_text)
+
         # Create a button to open settings window
         # self.settings_button = QPushButton("", self)
         new_file_path = os.path.join(self.app_dir, "img/ui/settings_button.svg")
@@ -312,7 +346,7 @@ class MainMenuWindow(QMainWindow):
         self.settings_button.setStyleSheet(
             "QPushButton {"
             "    background-color: rgba(0, 0, 0, 0);"
-            "    color: rgb(58, 134, 255);"
+            # "    color: rgb(58, 134, 255);"
             #"    border: 2px solid rgb(58, 134, 255);"
             "    border-radius: 8px;"
             "}"
@@ -460,6 +494,7 @@ class MainMenuWindow(QMainWindow):
         button_layout.addWidget(self.screenshot_button)
         button_layout.addWidget(self.pin_button)
         button_layout.addStretch(1)  # 弹簧项，推动右边的按钮靠右
+        button_layout.addWidget(self.clear_text_button)
         button_layout.addWidget(self.settings_button)
 
 
@@ -742,6 +777,10 @@ class MainMenuWindow(QMainWindow):
             if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
                 self.screen_capture_window.setWindowFlags(Qt.WindowStaysOnTopHint)
                 self.screen_capture_window.show()
+
+    def clear_label_text(self):
+        self.ocr_text_label.setText("")
+        self.translation_text_label.setText("")
 
     def show_settings(self):
         # disabled all button
