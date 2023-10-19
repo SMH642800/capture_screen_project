@@ -297,7 +297,7 @@ class MainMenuWindow(QMainWindow):
 
         # Create a button to clear label text
         # self.settings_button = QPushButton("", self)
-        new_file_path = os.path.join(self.app_dir, "img/ui/delete_button.svg")
+        new_file_path = os.path.join(self.app_dir, "img/ui/cleanup_button.png")
         self.clear_text_button = ScalableButton("clear_text_button", new_file_path)
         self.clear_text_button.setToolTip("清空文本")
         self.clear_text_button.setStyleSheet(
