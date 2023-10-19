@@ -117,7 +117,7 @@ class ScalableButton(QPushButton):
 
 class MainMenuWindow(QMainWindow):
     def __init__(self, config_handler: ConfigHandler, google_credential: GoogleCloudClient):
-        global client_vision, client_translate
+        #global client_vision, client_translate
 
         if getattr(sys, 'frozen', False):
             # 应用程序被打包
@@ -843,7 +843,7 @@ class MainMenuWindow(QMainWindow):
         if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
             # update system state
             self.system_state.setText("系統狀態： 已開啟擷取視窗")
-            
+
             # 将最小化的窗口恢复到正常状态
             self.screen_capture_window.showNormal()
 
@@ -1164,7 +1164,7 @@ class ScreenCaptureWindow(QMainWindow):
         self.closed.emit()  # Emit the signal when the window is closed
 
     def perform_ocr(self, screenshot):
-        global client_vision, client_translate
+        #global client_vision, client_translate
 
         # 保存当前图像作为上一次捕获的图像
         self.previous_image = screenshot.copy()
