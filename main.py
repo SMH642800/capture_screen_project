@@ -12,8 +12,6 @@ from PIL import ImageGrab, Image
 from PySide6.QtGui import QPalette, QColor, QFontMetrics, QIcon, QPixmap
 from PySide6.QtWidgets import QMainWindow, QMessageBox, QApplication, QPushButton, QHBoxLayout, QWidget, QScrollArea
 from PySide6.QtCore import Signal, QTimer, QSize, Property, QObject, QEasingCurve, QPropertyAnimation
-from google.cloud import vision_v1
-from google.cloud import translate_v2 as translate
 
 from settings import *
 from config_handler import *
