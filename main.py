@@ -1016,23 +1016,23 @@ class MainMenuWindow(QMainWindow):
 
         # set the add_window_button back to normal
         self.add_window_button.setStyleSheet(
-                "QPushButton {"
-                "    background-color: (0, 0, 0, 0);"
-                "    color: rgb(58, 134, 255);"
-                #"    border: 2px solid rgb(58, 134, 255);"
-                "    border-radius: 8px;"
-                "}"
-                "QPushButton:hover {"
-                "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #488EF7, stop: 1 #3478F6);"
-                "    border: none;"
-                "    color: white;"
-                "}"
-                "QPushButton:pressed {"
-                "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #3879E3, stop: 1 #2D66EA);"
-                "    border: none;"
-                "    color: white;"
-                "}"
-            )
+            "QPushButton {"
+            "    background-color: (0, 0, 0, 0);"
+            "    color: rgb(58, 134, 255);"
+            #"    border: 2px solid rgb(58, 134, 255);"
+            "    border-radius: 8px;"
+            "}"
+            "QPushButton:hover {"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #488EF7, stop: 1 #3478F6);"
+            "    border: none;"
+            "    color: white;"
+            "}"
+            "QPushButton:pressed {"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #3879E3, stop: 1 #2D66EA);"
+            "    border: none;"
+            "    color: white;"
+            "}"
+        )
 
         # update system state
         # self.system_state.setText("系統狀態： 尚未開啟擷取視窗")
