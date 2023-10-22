@@ -393,6 +393,8 @@ class MainMenuWindow(QMainWindow):
         self.ocr_text_label.setAutoFillBackground(True)  # 允许设置背景颜色
         self.ocr_text_label.setContentsMargins(10, 10, 10, 10)  # 設置距離最左、最右、最上、最下的內邊距為 10px
         self.ocr_text_label.setWordWrap(True)  # 启用自动换行
+        self.ocr_text_label.setTextInteractionFlags(Qt.TextSelectableByMouse)  # set text in label which can selected by users
+        self.ocr_text_label.setCursor(Qt.IBeamCursor)  # set cursor to selected cursor
 
         # Create a scroll area
         ocr_scroll_area = QScrollArea()
@@ -414,6 +416,8 @@ class MainMenuWindow(QMainWindow):
         self.translation_text_label.setContentsMargins(10, 10, 10, 10)  # 設置距離最左、最右、最上、最下的內邊距為 10px
         # self.translation_text_label.setMinimumWidth((screen_geometry.width() // 5) - 40)  # 设置最小宽度为 200 像素
         self.translation_text_label.setWordWrap(True)  # 启用自动换行
+        self.translation_text_label.setTextInteractionFlags(Qt.TextSelectableByMouse)  # set text in label which can selected by users
+        self.translation_text_label.setCursor(Qt.IBeamCursor)  # set cursor to selected cursor
 
         # Create a scroll area
         transaltion_scroll_area = QScrollArea()
@@ -443,9 +447,9 @@ class MainMenuWindow(QMainWindow):
         # Calculate the height based on font size
         # Set the height of ocr_label, translation_label, google_credential_state, system_state to match font size
         font_metrics = QFontMetrics(font)
-        state_font_metrics = QFontMetrics(state_font)
+        # state_font_metrics = QFontMetrics(state_font)
         label_height = font_metrics.height()
-        state_label_height = state_font_metrics.height()
+        # state_label_height = state_font_metrics.height()
         self.ocr_label.setFixedHeight(label_height)
         self.translation_label.setFixedHeight(label_height)
         # self.google_credential_state.setFixedHeight(state_label_height)
