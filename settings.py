@@ -3,7 +3,6 @@
 import os
 import sys
 import shutil
-import requests
 from PySide6.QtCore import QStandardPaths, QUrl, Signal
 from PySide6.QtGui import QFont, Qt, QDesktopServices, QPixmap
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QTabWidget, QApplication, QWidget, QLabel, QComboBox, QPushButton, QFrame, QColorDialog, QFileDialog, QMessageBox
@@ -311,49 +310,13 @@ class SettingsWindow(QDialog):
         self.credentials_link.setOpenExternalLinks(True)  # 允許外部連結
         self.credentials_link.linkActivated.connect(self.open_google_credential_settings_link)
 
-        # # create a button for check the newest version is released or not
-        # check_update_button = QPushButton("檢查更新")
-        # check_update_button.setFont(label_font)
-        # check_update_button.setCursor(Qt.PointingHandCursor)  # 设置悬停时鼠标光标
-        # check_update_button.clicked.connect(self.check_for_update)
-        # # 使用样式表自定义按钮的外观
-        # check_update_button.setStyleSheet(
-        #     "QPushButton {"
-        #     "    background-color: rgba(0, 0, 0, 0);"
-        #     "    color: #0074E4; /* 设置链接颜色 */"
-        #     "    border: none;"
-        #     "    text-decoration: underline; /* 添加下划线效果 */"
-        #     "    padding: 0;"
-        #     "}"
-        #     "QPushButton:hover {"
-        #     "    background-color: rgba(0, 0, 0, 0);"
-        #     "    color: #00469B; /* 鼠标悬停时的颜色 */"
-        #     "    border: none; "
-        #     "    text-decoration: underline; /* 鼠标悬停时添加下划线效果 */"
-        #     "}"
-        #     "QPushButton:pressed {"
-        #     "    background-color: rgba(0, 0, 0, 0);"
-        #     "    color: #002B66; /* 按下按钮时的颜色 */"
-        #     "    border: none;"
-        #     "    text-decoration: underline; /* 按下按钮时添加下划线效果 */"
-        #     "}"
-        # )
-
-        # 創建一條水平線以隔開 label
-        line = QFrame()
-        line.setFrameShape(QFrame.HLine)
-        line.setFrameShadow(QFrame.Sunken)
-        line.setLineWidth(1.5)  # 設置線條寬度為 2px
-
         # 将小部件添加到系統设置布局
         layout = QVBoxLayout()
-        #layout.addSpacing(15)  
+        layout.addSpacing(15)  
         layout.addWidget(self.set_credentials_button)
         layout.addWidget(self.google_credential_state)
         layout.addWidget(self.credentials_link)
-        layout.addWidget(line)
-        # layout.addWidget(check_update_button)
-        #layout.addSpacing(15) 
+        layout.addSpacing(15) 
         system_settings.setLayout(layout)
 
         return system_settings
@@ -361,73 +324,6 @@ class SettingsWindow(QDialog):
     def open_google_credential_settings_link(self, url):
         # 使用 QDesktopServices 打開 URL
         QDesktopServices.openUrl(QUrl(url))
-
-    # def check_for_update(self):
-    #     # create a messagebox to show the google credential state
-    #     #msg_box = QDialog()
-    #     msg_box = QMessageBox()
-    #     msg_box.setWindowTitle("Information")
-
-    #     # check update
-    #     try:
-    #         response = requests.get(github_api_url)
-    #         response.raise_for_status()
-    #         release_info = response.json()
-
-    #         latest_version = release_info["tag_name"]
-    #         current_version = self.config_handler.get_current_version()  # 将您的应用程序的当前版本替换成实际的版本号
-
-    #         if latest_version != current_version:
-    #             download_url = release_info["html_url"]
-
-    #             # set icon
-    #             icon_label = QLabel()
-    #             new_file_path = os.path.join(self.app_dir_path , "img/messagebox/info.png")
-    #             customIcon = QPixmap(new_file_path)  # 加载图标
-
-    #             icon_label.setPixmap(customIcon)
-    #             msg_box.setIconPixmap(customIcon)
-
-    #             # set URL link
-    #             download_link_label = QLabel(f"A new version ({latest_version}) is available!<br> You can <a href='{download_url}'>download it here</a>.")
-    #             download_link_label.setOpenExternalLinks(True)  # 允許外部連結
-    #             download_link_label.linkActivated.connect(lambda link: self.open_download_url(download_url))
-
-    #             # set OK button
-    #             ok_button = QPushButton("OK")
-    #             ok_button.clicked.connect(msg_box.accept)
-                
-    #             # set layout
-    #             layout = QVBoxLayout()
-    #             layout.addWidget(icon_label)
-    #             layout.addWidget(download_link_label)
-    #             layout.addWidget(ok_button)
-
-    #             # msg_box.setLayout(layout)
-
-    #             msg_box.setTextFormat(Qt.RichText)
-    #             text = f"A new version ({latest_version}) is available!<br> You can <a href='https://github.com/SMH642800/capture_screen_project/releases/tag/v0.1.0'>download it here</a>."
-    #             msg_box.setText(text)
-
-    #             msg_box.exec()
-    #         else:
-    #             # show messagebox
-    #             new_file_path = os.path.join(self.app_dir_path , "img/messagebox/info.png")
-    #             customIcon = QPixmap(new_file_path)  # 加载图标
-    #             msg_box.setIconPixmap(customIcon)
-    #             msg_box.setText("Your app is up to date.")
-    #             msg_box.exec()
-    #     except requests.exceptions.RequestException as e:
-    #         # show messagebox
-    #         new_file_path = os.path.join(self.app_dir_path , "img/messagebox/warning.png")
-    #         customIcon = QPixmap(new_file_path)  # 加载图标
-    #         msg_box.setIconPixmap(customIcon)
-    #         msg_box.setText(f"Error checking for updates: {str(e)}")
-    #         msg_box.exec()
-
-    # def open_download_url(self, url_link):
-    #     # 使用 QDesktopServices 打開 URL
-    #     QDesktopServices.openUrl(QUrl(url_link))
 
     def create_about_page(self):
         # 创建一个用于“关于”页面的 QWidget
@@ -438,10 +334,8 @@ class SettingsWindow(QDialog):
         label_font.setPointSize(14)
         label_font.setBold(True) # 設置粗體
 
-        current_version = self.config_handler.get_current_version()
-
         # 建立版本訊息、作者名稱
-        version_label = QLabel(f"版本: {current_version}")
+        version_label = QLabel(f"版本: ver0.1.0")
         author_label = QLabel("作者: Hsieh Meng-Hao")
 
         # 創建使用說明連結、Github連結

@@ -5,7 +5,6 @@ import os
 import sys
 import cv2
 import html
-import requests
 import subprocess
 import numpy as np 
 from io import BytesIO

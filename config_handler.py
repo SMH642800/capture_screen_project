@@ -42,7 +42,7 @@ class ConfigHandler():
                 "text_font_color": self.DEFAULT_FONT_COLOR,
                 "capture_frequency": self.DEFAULT_CAPTURE_FREQUENCY,
                 "google_cloud_key_file_path": self.DEFAULT_GOOGLE_CREDENTIAL_PATH,
-            }
+            },
         }
         with open(self.config_file_path, "w") as config_file:
             toml.dump(default_config, config_file)
