@@ -530,10 +530,6 @@ class MainMenuWindow(QMainWindow):
             self.google_credential.check_google_credential(google_key_file_path)
 
             if not self.update_google_credential_state():
-                # set only setting button enabled
-                for button in [self.add_window_button, self.action_button, self.screenshot_button, self.pin_button, self.clear_text_button]:
-                    button.setEnabled(False)
-
                 # set timer for messagebox delayed show
                 self.timer = QTimer(self)
                 self.timer.timeout.connect(self.show_message_box)
@@ -564,11 +560,18 @@ class MainMenuWindow(QMainWindow):
             # message = self.google_credential.get_message()
             # self.google_credential_state.setText(message)
 
+            for button in [self.add_window_button, self.action_button, self.screenshot_button, self.pin_button, self.clear_text_button, self.settings_button]:
+                button.setEnabled(True)
+
             return True
         else: 
             # 設置 google_credential_label
             # message = self.google_credential.get_message()
             # self.google_credential_state.setText(message)
+
+            for button in [self.add_window_button, self.action_button, self.screenshot_button, self.pin_button, self.clear_text_button]:
+                button.setEnabled(False)
+            self.settings_button.setEnabled(True)
 
             return False
 
@@ -780,10 +783,6 @@ class MainMenuWindow(QMainWindow):
         self.settings_window.update_google_credential_state.connect(self.update_google_credential_state)
         self.settings_window.setting_window_closed.connect(self.set_main_and_capture_window_frame_window_back)
         self.settings_window.exec()
-
-        # enabled all button
-        for button in [self.add_window_button, self.action_button, self.screenshot_button, self.pin_button, self.clear_text_button, self.settings_button]:
-            button.setEnabled(True)
 
         # main_window 切换成有框窗口
         self.setWindowFlags(Qt.Window)
