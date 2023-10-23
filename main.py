@@ -594,8 +594,8 @@ class MainMenuWindow(QMainWindow):
         msg_box = QMessageBox()
         msg_box.setWindowTitle("Welcome ! ")
         msg_box.setIconPixmap(customIcon)
-        msg_box.setText("歡迎使用「此應用程式」！ \n"
-            "\n在使用此應用程式之前，請至 【設定】 > 【系統】 > 【設置 Google 憑證】"
+        msg_box.setText("歡迎使用「Babel Tower」！ \n"
+            "\n在使用此應用程式之前，請先至 【設定】 > 【系統】 > 【設置 Google 憑證】"
             "，上傳已申請的 Google 憑證。")
 
         # 设置消息框始终显示在最顶部
@@ -635,8 +635,9 @@ class MainMenuWindow(QMainWindow):
         # check if a screen capture window is already open
         if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
             # restore the screen capture window after capturing the screenshot
-            # self.screen_capture_window.showNormal()
-            self.screen_capture_window.setWindowFlags(Qt.WindowStaysOnTopHint)
+            self.screen_capture_window.showNormal()
+            if self.is_pined:
+                self.screen_capture_window.setWindowFlags(Qt.WindowStaysOnTopHint)
             self.screen_capture_window.show()
 
     def delayed_process_screenshot_function(self):
@@ -790,16 +791,20 @@ class MainMenuWindow(QMainWindow):
 
         # main_window 切换成有框窗口
         self.setWindowFlags(Qt.Window)
-        # 恢复main_capture_window的最上层标志
-        self.setWindowFlag(Qt.WindowStaysOnTopHint)
+        if self.is_pined:
+            # 恢复main_capture_window的最上层标志
+            self.setWindowFlag(Qt.WindowStaysOnTopHint)
         self.show()
 
         # 如果screen_capture_window存在, 一併切换成有框窗口
         if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
             self.screen_capture_window.setWindowFlags(Qt.Window)
-            # 恢复screen_capture_window的最上层标志
-            self.screen_capture_window.setWindowFlag(Qt.WindowStaysOnTopHint)
+            if self.is_pined:
+                # 恢复screen_capture_window的最上层标志
+                self.screen_capture_window.setWindowFlag(Qt.WindowStaysOnTopHint)
             self.screen_capture_window.show()
+
+        
 
         # for button in [self.add_window_button, self.action_button, self.pin_button, self.settings_button]:
         #     button.setEnabled(False)
@@ -847,6 +852,10 @@ class MainMenuWindow(QMainWindow):
 
             # 将最小化的窗口恢复到正常状态
             self.screen_capture_window.showNormal()
+            if self.is_pined:
+                # 恢复screen_capture_window的最上层标志
+                self.screen_capture_window.setWindowFlag(Qt.WindowStaysOnTopHint)
+            self.screen_capture_window.show()
 
             # read messagebox warning icon
             new_file_path = os.path.join(self.app_dir, "img/messagebox/warning.png")
@@ -1007,6 +1016,7 @@ class MainMenuWindow(QMainWindow):
         self.update_text_font_size(text_font_size)
         self.update_text_font_color(text_font_color)
         self.update_recognition_frequency(frequency)
+        self.update_google_credential_state()
 
         # self.system_state.setText("系統狀態：系統設定完成")
 

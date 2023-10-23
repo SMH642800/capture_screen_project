@@ -56,6 +56,12 @@ class GoogleCloudClient:
                 # set message info
                 self._set_message("Google 憑證： <font color='green'>憑證有效</font> ")
             except Exception as e:
+                self._client_vision = None
+                self._client_translate = None
+                self._credentials = None
                 self._set_message("Google 憑證： <font color='red'>憑證無效</font> ")
         else:
+            self._client_vision = None
+            self._client_translate = None
+            self._credentials = None
             self._set_message("Google 憑證： <font color='red'>尚未設置憑證</font> ")

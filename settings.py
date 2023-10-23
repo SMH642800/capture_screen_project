@@ -249,18 +249,6 @@ class SettingsWindow(QDialog):
 
         # 创建一个按钮以设置 Google 凭证
         self.set_credentials_button = QPushButton("")
-
-        # 設置 google 憑證 button 的顯示文字
-        successed_message = "憑證有效"
-        failed_message = "憑證無效"
-        not_set_message = "尚未設置憑證"
-        if successed_message in self.google_credential.get_message():
-            self.set_credentials_button.setText("更新 Google 憑證")
-        if failed_message in self.google_credential.get_message():
-            self.set_credentials_button.setText("更新 Google 憑證")
-        if not_set_message in self.google_credential.get_message():
-            self.set_credentials_button.setText("設定 Google 憑證")
-
         self.set_credentials_button.setFont(button_font)
         self.set_credentials_button.clicked.connect(self.set_google_credentials)
         # 使用样式表自定义按钮的外观
@@ -298,7 +286,20 @@ class SettingsWindow(QDialog):
         # set the text with return message from check_google_credential
         message = self.google_credential.get_message()
         self.google_credential_state.setText(message)
-        
+
+        # 設置 google 憑證 button 的顯示文字
+        successed_message = "憑證有效"
+        failed_message = "憑證無效"
+        not_set_message = "尚未設置憑證"
+        if successed_message in self.google_credential.get_message():
+            self.set_credentials_button.setText("更新 Google 憑證")
+        if failed_message in self.google_credential.get_message():
+            self.set_credentials_button.setText("更新 Google 憑證")
+        if not_set_message in self.google_credential.get_message():
+            self.set_credentials_button.setText("設定 Google 憑證")
+
+        # send signal that make main windows update the google state
+        self.update_google_credential_state.emit()
 
         # 創建如何取得google憑證連結
         new_file_path = os.path.join(self.app_dir_path, "sub-google-api.html")
@@ -495,9 +496,6 @@ class SettingsWindow(QDialog):
                         self.set_credentials_button.setText("設定 Google 憑證")
                     else:
                         self.set_credentials_button.setText("更新 Google 憑證")
-
-                # send signal that make main windows update the google state
-                self.update_google_credential_state.emit()
 
 
     def closeEvent(self, event):
