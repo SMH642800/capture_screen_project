@@ -1005,7 +1005,8 @@ class MainMenuWindow(QMainWindow):
 
             # 恢复screen_capture_window的最上层标志
             # 设置窗口标志
-            self.screen_capture_window.setWindowFlag(Qt.WindowStaysOnTopHint)
+            if self.is_pined:
+                self.screen_capture_window.setWindowFlag(Qt.WindowStaysOnTopHint)
             self.screen_capture_window.show()
 
     def set_main_and_capture_window_frame_window_back(self):
