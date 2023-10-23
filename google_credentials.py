@@ -1,5 +1,5 @@
 import os
-from google.cloud import vision_v1
+from google.cloud import vision_v1 as vision
 from google.cloud import translate_v2 as translate
 from google.oauth2 import service_account
 
@@ -12,7 +12,7 @@ class GoogleCloudClient:
 
     def _set_google_vision(self):
         # 初始化 Google Cloud Vision API 客户端
-        self._client_vision = vision_v1.ImageAnnotatorClient()
+        self._client_vision = vision.ImageAnnotatorClient()
 
     def _set_google_translation(self):
         # 初始化 Google Cloud Translation API 客户端

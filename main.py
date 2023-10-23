@@ -6,12 +6,14 @@ import sys
 import cv2
 import html
 import subprocess
+import pytesseract
 import numpy as np 
 from io import BytesIO
 from PIL import ImageGrab, Image
 from PySide6.QtGui import QPalette, QColor, QFontMetrics, QIcon, QPixmap
 from PySide6.QtWidgets import QMainWindow, QMessageBox, QApplication, QPushButton, QHBoxLayout, QWidget, QScrollArea
 from PySide6.QtCore import Signal, QTimer, QSize, Property, QObject, QEasingCurve, QPropertyAnimation
+# from google.cloud import vision_v1p4beta1 as vision
 
 from settings import *
 from config_handler import *
@@ -665,7 +667,7 @@ class MainMenuWindow(QMainWindow):
                 image_data = img_bytes.getvalue()
 
             # 使用Google Cloud Vision API進行文字辨識
-            image = vision_v1.Image(content=image_data)
+            image = vision.Image(content=image_data)
             response = client_vision.text_detection(image=image)
             texts = response.text_annotations
 
@@ -1293,7 +1295,7 @@ class ScreenCaptureWindow(QMainWindow):
 
 
         # 使用Google Cloud Vision API進行文字辨識
-        image = vision_v1.Image(content=screenshot_bytes)
+        image = vision.Image(content=screenshot_bytes)
         response = client_vision.text_detection(image=image)
         texts = response.text_annotations
 
