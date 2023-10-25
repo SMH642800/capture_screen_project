@@ -19,7 +19,7 @@ class SettingsWindow(QDialog):
     # create a custom signal for update google credential state in main window
     update_google_credential_state = Signal()
 
-    def __init__(self, config_handler: ConfigHandler, google_credential: GoogleCloudClient):
+    def __init__(self, config_handler: ConfigHandler, google_credential: GoogleCloudClient, main_window_screen):
         super().__init__()
 
         # set app's pwd
@@ -39,6 +39,9 @@ class SettingsWindow(QDialog):
         # import google credential module
         self.google_credential = google_credential
 
+        # screen info
+        self.main_window_screen = main_window_screen
+
         # # Set the window opacity
         self.setWindowOpacity(0.99)
 
@@ -52,9 +55,19 @@ class SettingsWindow(QDialog):
         # 设置窗口标题和属性
         self.setWindowTitle("設定")
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)  # 使设置窗口始终位于顶层
-        self.setFixedSize(300, 220)  # 視窗大小 300 x 200
-        #self.resize(300, 200)
-        self.center()  # 視窗顯示在螢幕正中間
+        self.setFixedSize(300, 220)  # 視窗大小 300 x 220
+
+        # Calculate the position to center the window on the main window's screen
+        setting_window_geometry = self.main_window_screen.geometry()
+        print(setting_window_geometry.left(), setting_window_geometry.top(),setting_window_geometry.width(),self.width())
+        self.setGeometry(
+            setting_window_geometry.left() + (setting_window_geometry.width() - self.width()) / 2,
+            setting_window_geometry.top() + setting_window_geometry.height() // 4,
+            self.width(),
+            self.height()
+        )
+        top_left = self.pos()
+        print("Top-left position:", top_left)
 
         # Create a top-level layout
         layout = QVBoxLayout()

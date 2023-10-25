@@ -129,6 +129,9 @@ class MainMenuWindow(QMainWindow):
 
         super().__init__()
 
+        # set the screen that main window stay on
+        self.main_window_screen = None
+
         # read config file
         self.config_handler = config_handler
 
@@ -786,7 +789,10 @@ class MainMenuWindow(QMainWindow):
 
         # self.system_state.setText("系統狀態： 正在設定系統......")
 
-        self.settings_window = SettingsWindow(self.config_handler, self.google_credential)
+        # Get the main window's screen based on its current position
+        self.main_window_screen = QApplication.screenAt(self.mapToGlobal(self.rect().topLeft()))
+
+        self.settings_window = SettingsWindow(self.config_handler, self.google_credential, self.main_window_screen)
         self.settings_window.update_google_credential_state.connect(self.update_google_credential_state)
         self.settings_window.setting_window_closed.connect(self.set_main_and_capture_window_frame_window_back)
         self.settings_window.exec()
@@ -870,8 +876,11 @@ class MainMenuWindow(QMainWindow):
             msg_box.setText("你已經開啟擷取視窗！")
             msg_box.exec()
         else:
+            # Get the main window's screen based on its current position
+            self.main_window_screen = QApplication.screenAt(self.mapToGlobal(self.rect().topLeft()))
+
             # Create and show the screen capture window
-            self.screen_capture_window = ScreenCaptureWindow()
+            self.screen_capture_window = ScreenCaptureWindow(self.main_window_screen)
             self.screen_capture_window.closed.connect(self.handle_screen_capture_window_closed)
             self.screen_capture_window.show()
 
@@ -1067,7 +1076,7 @@ class ScreenCaptureWindow(QMainWindow):
     # Define a custom signal
     closed = Signal()
   
-    def __init__(self):
+    def __init__(self, main_window_screen):
 
         if getattr(sys, 'frozen', False):
             # 应用程序被打包
@@ -1081,6 +1090,9 @@ class ScreenCaptureWindow(QMainWindow):
 
         # 定義一個變數用來比較前一張已辨識的圖片
         self.previous_image = None
+
+        # screen info
+        self.main_window_screen = main_window_screen
   
         # set the title
         self.setWindowTitle("擷取視窗")
@@ -1095,9 +1107,12 @@ class ScreenCaptureWindow(QMainWindow):
 
         # 创建一个水平布局管理器
         layout = QHBoxLayout()
+
+        # setting the geometry of window
+        # self.move(self.main_window_screen.geometry().topLeft())
   
         # setting  the geometry of window
-        screen_geometry = QApplication.primaryScreen().geometry()
+        screen_geometry = self.main_window_screen.geometry()
 
         # set x, y coordinate & width, height
         start_x_position = screen_geometry.left() + screen_geometry.width() // 4
