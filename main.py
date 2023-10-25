@@ -155,7 +155,7 @@ class MainMenuWindow(QMainWindow):
         self.setPalette(main_window_palette)
 
         # Set the window opacity
-        self.setWindowOpacity(0.95)
+        self.setWindowOpacity(0.9)
 
         # Set the window geometry
         screen_geometry = QApplication.primaryScreen().geometry()
@@ -1187,15 +1187,15 @@ class ScreenCaptureWindow(QMainWindow):
     def stop_capture(self):
         self.timer.stop()
 
-        new_file_path = os.path.join(self.app_dir, "img/messagebox/info.png")
-        customIcon = QPixmap(new_file_path)  # 加载图标
+        # new_file_path = os.path.join(self.app_dir, "img/messagebox/info.png")
+        # customIcon = QPixmap(new_file_path)  # 加载图标
 
-        # 创建消息框
-        msg_box = QMessageBox()
-        msg_box.setWindowTitle("Info")
-        msg_box.setIconPixmap(customIcon)
-        msg_box.setText("已停止擷取！")
-        msg_box.exec()
+        # # 创建消息框
+        # msg_box = QMessageBox()
+        # msg_box.setWindowTitle("Info")
+        # msg_box.setIconPixmap(customIcon)
+        # msg_box.setText("已停止擷取！")
+        # msg_box.exec()
 
         # 恢复窗口透明度和边界线条
         self.setWindowOpacity(0.7)
