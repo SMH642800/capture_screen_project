@@ -6,7 +6,6 @@ import sys
 import cv2
 import html
 import subprocess
-import pytesseract
 import numpy as np 
 from io import BytesIO
 from PIL import ImageGrab, Image
@@ -139,12 +138,18 @@ class MainMenuWindow(QMainWindow):
 
         # set private member
         self._frequency = ""
+        self._auto_recaputre_state = None
         #self._google_credentials = ""
 
-        # 設置 capturing state 顯示計時器
-        # self.capturing_system_state_timer = QTimer(self)
-        # self.capturing_system_state_timer.timeout.connect(self.update_system_state)
-        # self.system_state_flag = True
+        # 設置 resume_capture 計時器
+        self.resume_capture_timer = QTimer(self)
+        self.resume_capture_timer.setSingleShot(True)
+        self.resume_capture_timer.timeout.connect(self.start_capture)
+
+        # 設置 action_button countdown
+        self.countdown_timer = QTimer(self)
+        self.countdown_timer.timeout.connect(self.update_countdown_text)
+        self.countdown = 0 
 
         # Set the title
         self.setWindowTitle("Babel Tower")
@@ -210,6 +215,7 @@ class MainMenuWindow(QMainWindow):
             "    color: rgb(58, 134, 255);"
             #"    border: 2px solid rgb(58, 134, 255);"
             "    border-radius: 8px;"
+            "    font-size: 30px;"
             "}"
             "QPushButton:hover {"
             "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #488EF7, stop: 1 #3478F6);"
@@ -476,6 +482,10 @@ class MainMenuWindow(QMainWindow):
         frequency = self.config_handler.get_capture_frequency()
         self.update_recognition_frequency(frequency)
 
+        # 讀取 config file 中的 auto_capture_state
+        state = self.config_handler.get_auto_recapture_state()
+        self.update_auto_capture_state(state)
+
         # Create a vertical layout
         layout = QVBoxLayout()
 
@@ -592,7 +602,7 @@ class MainMenuWindow(QMainWindow):
         # 停止计时器
         self.timer.stop()
 
-        new_file_path = os.path.join(self.app_dir, "img/index/tataru_round.png")
+        new_file_path = os.path.join(self.app_dir, "img/index/Babel_Tower.png")
         customIcon = QPixmap(new_file_path)  # 加载图标
 
         # 创建消息框
@@ -655,6 +665,10 @@ class MainMenuWindow(QMainWindow):
         # stop screenshot_timer
         self.screenshot_timer.stop()
 
+        # check screen capture is working or not
+        if self.capturing:
+            self.stop_capture()
+
         # get screenshot_path
         screenshot_path = os.path.join(self.app_dir, "screenshot.png")
         subprocess.run(["screencapture", "-i", screenshot_path])
@@ -700,6 +714,23 @@ class MainMenuWindow(QMainWindow):
 
             # delete screenshot image after ocr complete
             os.remove(screenshot_path)
+
+        if self._auto_recaputre_state == 2:
+            # 倒數 5 秒恢復擷取畫面
+            self.resume_capture_timer.start(5000)
+
+            # 設置 action_button 為倒數計時器
+            self.countdown = 5
+            self.action_button.setIcon(QIcon())
+            self.update_countdown_text()
+            self.countdown_timer.start(1000)
+
+    def update_countdown_text(self):
+        self.countdown -= 1
+        if self.countdown >= 0:
+            self.action_button.setText(str(self.countdown + 1))
+        else:
+            self.countdown_timer.stop()
 
     def pin_on_top(self):
         if self.is_pined:
@@ -847,6 +878,9 @@ class MainMenuWindow(QMainWindow):
         # Update Frequency
         self._frequency = new_frequency
 
+    def update_auto_capture_state(self, state):
+        self._auto_recaputre_state = state
+
     # def update_google_credential(self, new_google_credential):
     #     # Update google credential
     #     self._google_credentials = new_google_credential
@@ -911,6 +945,7 @@ class MainMenuWindow(QMainWindow):
             self.capturing = True 
             new_file_path = os.path.join(self.app_dir, "img/ui/record_button_stop.png")
             self.action_button.createIcon(new_file_path)
+            self.action_button.setText("")
             self.action_button.setToolTip("停止擷取畫面")
             self.action_button.setStyleSheet(
                 "QPushButton {"
@@ -918,6 +953,7 @@ class MainMenuWindow(QMainWindow):
                 # "    color: rgb(58, 134, 255);"
                 #"    border: 2px solid rgb(58, 134, 255);"
                 "    border-radius: 8px;"
+                "    font-size: 30px;"
                 "}"
                 "QPushButton:hover {"
                 "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #EB6777, stop: 1 #E63F46);"
@@ -942,7 +978,7 @@ class MainMenuWindow(QMainWindow):
 
             self.screen_capture_window.start_capture()
 
-            for button in [self.add_window_button, self.screenshot_button, self.pin_button, self.clear_text_button, self.settings_button]:
+            for button in [self.add_window_button, self.pin_button, self.clear_text_button, self.settings_button]:
                 button.setEnabled(False)
 
             # 移除screen_capture_window的最上层标志
@@ -987,6 +1023,7 @@ class MainMenuWindow(QMainWindow):
                 "    color: rgb(58, 134, 255);"
                 #"    border: 2px solid rgb(58, 134, 255);"
                 "    border-radius: 8px;"
+                "    font-size: 30px;"
                 "}"
                 "QPushButton:hover {"
                 "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #488EF7, stop: 1 #3478F6);"
@@ -1025,9 +1062,11 @@ class MainMenuWindow(QMainWindow):
         text_font_size = self.config_handler.get_font_size()
         text_font_color = self.config_handler.get_font_color()
         frequency = self.config_handler.get_capture_frequency()
+        state = self.config_handler.get_auto_recapture_state()
         self.update_text_font_size(text_font_size)
         self.update_text_font_color(text_font_color)
         self.update_recognition_frequency(frequency)
+        self.update_auto_capture_state(state)
         self.update_google_credential_state()
 
         # self.system_state.setText("系統狀態：系統設定完成")
@@ -1230,8 +1269,8 @@ class ScreenCaptureWindow(QMainWindow):
             current_cv = cv2.cvtColor(np.array(current_image), cv2.COLOR_RGB2BGR)
 
             # 將圖像轉換為灰度圖像
-            previous_gray = cv2.cvtColor(previous_cv, cv2.COLOR_BGR2GRAY)
-            current_gray = cv2.cvtColor(current_cv, cv2.COLOR_BGR2GRAY)
+            # previous_gray = cv2.cvtColor(previous_cv, cv2.COLOR_BGR2GRAY)
+            # current_gray = cv2.cvtColor(current_cv, cv2.COLOR_BGR2GRAY)
             """
             # 將灰度圖像進行二值化處理
             _, previous_binary = cv2.threshold(previous_gray, 128, 255, cv2.THRESH_BINARY)
@@ -1239,7 +1278,7 @@ class ScreenCaptureWindow(QMainWindow):
             """
 
             # 使用OpenCV的相似度比较方法
-            result = cv2.matchTemplate(current_gray, previous_gray, cv2.TM_CCOEFF_NORMED)
+            result = cv2.matchTemplate(current_cv, previous_cv, cv2.TM_CCOEFF_NORMED)
 
             # 获取最大匹配值
             max_similarity = np.max(result)

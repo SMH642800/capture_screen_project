@@ -37,7 +37,7 @@ exe = EXE(
     strip=False,
     upx=True,
     console=False,
-    icon='tataru.icns',
+    icon='Babel_Tower_macOS.icns',
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
@@ -55,7 +55,7 @@ coll = COLLECT(
 )
 app = BUNDLE(
     coll,
-    name='myAppTest2.app',
-    icon='tataru.icns',
+    name='myAppTest4.app',
+    icon='Babel_Tower_macOS.icns',
     bundle_identifier=None,
 )

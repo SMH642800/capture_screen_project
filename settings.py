@@ -3,12 +3,105 @@
 import os
 import sys
 import shutil
-from PySide6.QtCore import QStandardPaths, QUrl, Signal
-from PySide6.QtGui import QFont, Qt, QDesktopServices, QPixmap
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QTabWidget, QApplication, QWidget, QLabel, QComboBox, QPushButton, QFrame, QColorDialog, QFileDialog, QMessageBox
+from PySide6.QtCore import QStandardPaths, QUrl, Signal, QRect, QPoint, QPropertyAnimation, QEasingCurve, Property
+from PySide6.QtGui import QFont, Qt, QDesktopServices, QPixmap, QPainter, QColor
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QTabWidget, QApplication, QWidget, QLabel, QComboBox, QPushButton, QFrame, QColorDialog, QFileDialog, QMessageBox, QCheckBox
 
 from config_handler import *
 from google_credentials import *
+
+
+# 創建 slide toggle check box
+class SlideToggle(QCheckBox):
+    def __init__(
+        self,
+        width = 54,
+        height = 24,
+        bg_color = "#777",
+        circle_color = "#DDD",
+        active_color = "#00BCff",
+        animation_curve = QEasingCurve.Linear
+    ):
+        QCheckBox.__init__(self)
+
+        # SET DEFALT PARAMETERS
+        self.setFixedSize(width, height)
+        self.setCursor(Qt.PointingHandCursor)
+
+        # COLORS
+        self._bg_color = bg_color
+        self._circle_color = circle_color
+        self._active_color = active_color
+
+        # CREATE ANIMATION
+        self._circle_position = 3
+        self._circle_radius = height / 2 - 2  # 圆圈的半径
+        self.animation = QPropertyAnimation(self, b"circle_position", self)
+        self.animation.setEasingCurve(animation_curve)
+        self.animation.setDuration(150)
+
+        # CONNECT STATE CHANGED
+        self.stateChanged.connect(self.start_transition)
+
+    # CREATE NEW SET AND GET PROPERTIE
+    @Property(float)
+    def circle_position(self):
+        return self._circle_position
+    
+    @circle_position.setter
+    def circle_position(self, pos):
+        self._circle_position = pos
+        self.update()
+
+    def start_transition(self, value):
+        self.animation.stop()
+        if value:
+            self.animation.setEndValue(self.width() - 2 * self._circle_radius - 3)
+        else:
+            self.animation.setEndValue(3)
+
+        # START ANIMATION
+        self.animation.start()
+
+    # SET NEW HIT AREA
+    def hitButton(self, pos: QPoint):
+        return self.contentsRect().contains(pos)
+
+    def paintEvent (self, e):
+        # SET PAINTER
+        p = QPainter (self)
+        p.setRenderHint(QPainter.Antialiasing)
+
+        # SET AS NO PEN
+        p. setPen(Qt.NoPen)
+
+        # DRAW RECTANGLE
+        rect = QRect(0, 0, self.width(), self.height())
+
+        # CHECH IF IS CHECKED
+        if not self.isChecked():
+            # DRAW BG
+            p.setBrush(QColor(self._bg_color))
+            p.drawRoundedRect(0, 0, rect.width(), self.height(), self.height() / 2, self.height() / 2)
+
+            # DRAW CIRCLE
+            circle_x = self._circle_position
+            circle_y = (self.height() - 2 * self._circle_radius) / 2  # 垂直居中
+            p.setBrush(QColor(self._circle_color))
+            p.drawEllipse(circle_x, circle_y, 2 * self._circle_radius, 2 * self._circle_radius)
+        else:
+            # DRAW BG
+            p.setBrush(QColor(self._active_color))
+            p.drawRoundedRect(0, 0, rect.width(), self.height(), self.height() / 2, self.height() / 2)
+
+            # DRAW CIRCLE
+            circle_x = self._circle_position
+            circle_y = (self.height() - 2 * self._circle_radius) / 2  # 垂直居中
+            p.setBrush(QColor(self._circle_color))
+            p.drawEllipse(circle_x, circle_y, 2 * self._circle_radius, 2 * self._circle_radius)
+
+        # END DRAW
+        p.end()
 
 
 # 创建一个新的类以用于设置窗口
@@ -50,6 +143,7 @@ class SettingsWindow(QDialog):
         self._text_font_color = self.config_handler.get_font_color()
         self._text_font_color_name = self._text_font_color
         self._frequency = self.config_handler.get_capture_frequency()
+        self._auto_recapture_state = self.config_handler.get_auto_recapture_state()
         # self._google_credentials = self.config_handler.get_google_credential_path()
 
         # 设置窗口标题和属性
@@ -59,7 +153,6 @@ class SettingsWindow(QDialog):
 
         # Calculate the position to center the window on the main window's screen
         setting_window_geometry = self.main_window_screen.geometry()
-        print(setting_window_geometry.left(), setting_window_geometry.top(),setting_window_geometry.width(),self.width())
         self.setGeometry(
             setting_window_geometry.left() + (setting_window_geometry.width() - self.width()) / 2,
             setting_window_geometry.top() + setting_window_geometry.height() // 4,
@@ -67,7 +160,6 @@ class SettingsWindow(QDialog):
             self.height()
         )
         top_left = self.pos()
-        print("Top-left position:", top_left)
 
         # Create a top-level layout
         layout = QVBoxLayout()
@@ -76,7 +168,7 @@ class SettingsWindow(QDialog):
         # Create the tab widget for switch pages
         tabs = QTabWidget()
         tabs.addTab(self.create_text_settings(), "文字")
-        tabs.addTab(self.create_recognition_settings(), "辨識")
+        tabs.addTab(self.create_recognition_settings(), "擷取")
         tabs.addTab(self.create_system_settings(), "系統")
         tabs.addTab(self.create_about_page(), "關於")
         tabs.setStyleSheet("QTabBar::tab { font-size: 14px; }")  # set tabs font size: 14px
@@ -208,7 +300,16 @@ class SettingsWindow(QDialog):
         # 创建一个用于辨识设置的 QWidget
         recognition_settings = QWidget()
 
-        frequency_label = QLabel("辨識頻率 ")
+        # Create a vertical layout for the recognition settings
+        vbox = QVBoxLayout()
+
+        # Create a horizontal layout for the frequency label and combo
+        frequency_layout = QHBoxLayout()
+
+        # Create a horizontal layout for the checkbox and label
+        checkbox_layout = QHBoxLayout()
+
+        frequency_label = QLabel("擷取頻率 ")
 
         # set font size to 14px
         label_font = QFont()
@@ -237,12 +338,33 @@ class SettingsWindow(QDialog):
 
         frequency_combo.currentIndexChanged.connect(self.update_recognition_frequency)
 
-        # 将小部件添加到辨識设置布局
-        layout = QHBoxLayout()
-        layout.addSpacing(10)  # 添加一个占位符来距离左边至少 10px
-        layout.addWidget(frequency_label)
-        layout.addWidget(frequency_combo)
-        recognition_settings.setLayout(layout)
+        # set auto recapture check box
+        auto_recapture_check_box = SlideToggle()
+        auto_recapture_check_box.setChecked(self._auto_recapture_state)
+        auto_recapture_check_box.stateChanged.connect(self.update_auto_recapture_state)
+
+        check_box_label = QLabel("截圖後自動繼續擷取")
+        check_box_label.setFont(label_font)
+
+        # Add the label and combo to the horizontal layout
+        frequency_layout.addWidget(frequency_label)
+        frequency_layout.addWidget(frequency_combo)
+
+        # Add the label and checkbox to the horizontal layout
+        checkbox_layout.addSpacing(3)
+        checkbox_layout.addWidget(auto_recapture_check_box)
+        checkbox_layout.addSpacing(28)
+        checkbox_layout.addWidget(check_box_label)
+
+        # Add the horizontal layout and the check box to the vertical layout
+        vbox.addStretch(1)
+        vbox.addLayout(frequency_layout)
+        vbox.addSpacing(15)
+        vbox.addLayout(checkbox_layout)
+        vbox.addStretch(1)
+
+        # add all widget
+        recognition_settings.setLayout(vbox)
 
         return recognition_settings
 
@@ -438,6 +560,10 @@ class SettingsWindow(QDialog):
         
         # 保存用户设置到 TOML 配置文件
         self.config_handler.set_capture_frequency(self._frequency)
+
+    def update_auto_recapture_state(self, value):
+        self._auto_recapture_state = value
+        self.config_handler.set_auto_recapture_state(value)
 
     def set_google_credentials(self):
         # 打开一个文件对话框，让用户选择 Google 凭证文件

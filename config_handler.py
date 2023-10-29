@@ -9,6 +9,7 @@ class ConfigHandler():
     DEFAULT_FONT_SIZE = 14
     DEFAULT_FONT_COLOR = "#FFFFFF"
     DEFAULT_CAPTURE_FREQUENCY = "標準 (2 秒)"
+    DEFAULT_AUTO_RECAPTURE_STATE = False
     DEFAULT_GOOGLE_CREDENTIAL_PATH = ""
     
 
@@ -41,6 +42,7 @@ class ConfigHandler():
                 "text_font_size": self.DEFAULT_FONT_SIZE,
                 "text_font_color": self.DEFAULT_FONT_COLOR,
                 "capture_frequency": self.DEFAULT_CAPTURE_FREQUENCY,
+                "auto_recapture_state": self.DEFAULT_AUTO_RECAPTURE_STATE,
                 "google_cloud_key_file_path": self.DEFAULT_GOOGLE_CREDENTIAL_PATH,
             },
         }
@@ -61,6 +63,11 @@ class ConfigHandler():
         self.config["Settings"]["capture_frequency"] = new_capture_frequency
         with open(self.config_file_path, 'w') as f:
             toml.dump(self.config, f)
+            
+    def set_auto_recapture_state(self, new_state):
+        self.config["Settings"]["auto_recapture_state"] = new_state
+        with open(self.config_file_path, 'w') as f:
+            toml.dump(self.config, f)
     
     def set_google_credential_path(self, new_google_credential_path):
         self.config["Settings"]["google_cloud_key_file_path"] = new_google_credential_path
@@ -75,6 +82,9 @@ class ConfigHandler():
     
     def get_capture_frequency(self):
         return self.config.get('Settings', {}).get('capture_frequency', self.DEFAULT_CAPTURE_FREQUENCY)
+    
+    def get_auto_recapture_state(self):
+        return self.config.get('Settings', {}).get('auto_recapture_state', self.DEFAULT_AUTO_RECAPTURE_STATE)
     
     def get_google_credential_path(self):
         return self.config.get('Settings', {}).get('google_cloud_key_file_path', self.DEFAULT_GOOGLE_CREDENTIAL_PATH)
