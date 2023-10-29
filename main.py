@@ -139,6 +139,7 @@ class MainMenuWindow(QMainWindow):
         # set private member
         self._frequency = ""
         self._auto_recaputre_state = None
+        self.pause_capture = False
         #self._google_credentials = ""
 
         # 設置 resume_capture 計時器
@@ -668,6 +669,9 @@ class MainMenuWindow(QMainWindow):
         # check screen capture is working or not
         if self.capturing:
             self.stop_capture()
+            self.pause_capture = True
+            self.action_button.setEnabled(False)
+            self.settings_button.setEnabled(False)
 
         # get screenshot_path
         screenshot_path = os.path.join(self.app_dir, "screenshot.png")
@@ -715,15 +719,18 @@ class MainMenuWindow(QMainWindow):
             # delete screenshot image after ocr complete
             os.remove(screenshot_path)
 
-        if self._auto_recaputre_state == 2:
-            # 倒數 5 秒恢復擷取畫面
-            self.resume_capture_timer.start(5000)
+        # 如果screen_capture_window存在
+        if hasattr(self, 'screen_capture_window') and self.screen_capture_window:
+            if self.pause_capture:
+                if self._auto_recaputre_state == 2:
+                    # 倒數 5 秒恢復擷取畫面
+                    self.resume_capture_timer.start(5000)
 
-            # 設置 action_button 為倒數計時器
-            self.countdown = 5
-            self.action_button.setIcon(QIcon())
-            self.update_countdown_text()
-            self.countdown_timer.start(1000)
+                    # 設置 action_button 為倒數計時器
+                    self.countdown = 5
+                    self.action_button.setIcon(QIcon())
+                    self.update_countdown_text()
+                    self.countdown_timer.start(1000)
 
     def update_countdown_text(self):
         self.countdown -= 1
@@ -731,6 +738,9 @@ class MainMenuWindow(QMainWindow):
             self.action_button.setText(str(self.countdown + 1))
         else:
             self.countdown_timer.stop()
+            self.pause_capture = False
+            self.action_button.setEnabled(True)
+            self.settings_button.setEnabled(True)
 
     def pin_on_top(self):
         if self.is_pined:
@@ -1078,6 +1088,10 @@ class MainMenuWindow(QMainWindow):
         # Slot to handle the screen capture window being closed
         self.screen_capture_window = None
 
+        self.resume_capture_timer.stop()
+        self.countdown_timer.stop()
+        self.action_button.setEnabled(True)
+
         # set the add_window_button back to normal
         self.add_window_button.setStyleSheet(
             "QPushButton {"
@@ -1085,6 +1099,30 @@ class MainMenuWindow(QMainWindow):
             "    color: rgb(58, 134, 255);"
             #"    border: 2px solid rgb(58, 134, 255);"
             "    border-radius: 8px;"
+            "}"
+            "QPushButton:hover {"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #488EF7, stop: 1 #3478F6);"
+            "    border: none;"
+            "    color: white;"
+            "}"
+            "QPushButton:pressed {"
+            "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #3879E3, stop: 1 #2D66EA);"
+            "    border: none;"
+            "    color: white;"
+            "}"
+        )
+
+        new_file_path = os.path.join(self.app_dir, "img/ui/record_button_start.svg")
+        self.action_button.createIcon(new_file_path)
+        self.action_button.setText("")
+        self.action_button.setToolTip("開始擷取畫面")
+        self.action_button.setStyleSheet(
+            "QPushButton {"
+            "    background-color: rgba(0, 0, 0, 0);"
+            "    color: rgb(58, 134, 255);"
+            #"    border: 2px solid rgb(58, 134, 255);"
+            "    border-radius: 8px;"
+            "    font-size: 30px;"
             "}"
             "QPushButton:hover {"
             "    background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #488EF7, stop: 1 #3478F6);"
