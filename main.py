@@ -1095,6 +1095,7 @@ class MainMenuWindow(QMainWindow):
         self.resume_capture_timer.stop()
         self.countdown_timer.stop()
         self.action_button.setEnabled(True)
+        self.settings_button.setEnabled(True)
 
         # set the add_window_button back to normal
         self.add_window_button.setStyleSheet(
