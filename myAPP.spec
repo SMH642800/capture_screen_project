@@ -55,7 +55,7 @@ coll = COLLECT(
 )
 app = BUNDLE(
     coll,
-    name='myAppTest4.app',
+    name='Babel Tower.app',
     icon='Babel_Tower_macOS.icns',
     bundle_identifier=None,
 )

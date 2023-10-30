@@ -731,6 +731,10 @@ class MainMenuWindow(QMainWindow):
                     self.action_button.setIcon(QIcon())
                     self.update_countdown_text()
                     self.countdown_timer.start(1000)
+                else:
+                    self.pause_capture = False
+                    self.action_button.setEnabled(True)
+                    self.settings_button.setEnabled(True)
 
     def update_countdown_text(self):
         self.countdown -= 1
