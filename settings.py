@@ -177,13 +177,6 @@ class SettingsWindow(QDialog):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             event.ignore()  # 阻止 ESC 鍵事件傳播
-    
-    def center(self):
-        screen = QApplication.primaryScreen()
-        screen_geometry = screen.geometry()
-        x = (screen_geometry.width() - self.width()) // 2
-        y = screen_geometry.height() // 5
-        self.move(x, y)
 
     def create_text_settings(self):
         # 创建一个用于文本设置的 QWidget
