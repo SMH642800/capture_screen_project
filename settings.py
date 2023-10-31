@@ -159,7 +159,6 @@ class SettingsWindow(QDialog):
             self.width(),
             self.height()
         )
-        top_left = self.pos()
 
         # Create a top-level layout
         layout = QVBoxLayout()
