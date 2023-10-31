@@ -670,8 +670,8 @@ class MainMenuWindow(QMainWindow):
         if self.capturing:
             self.stop_capture()
             self.pause_capture = True
-            self.action_button.setEnabled(False)
-            self.settings_button.setEnabled(False)
+            for button in [self.add_window_button,self.action_button, self.pin_button, self.clear_text_button, self.settings_button]:
+                button.setEnabled(False)
 
         # get screenshot_path
         screenshot_path = os.path.join(self.app_dir, "screenshot.png")
@@ -733,8 +733,8 @@ class MainMenuWindow(QMainWindow):
                     self.countdown_timer.start(1000)
                 else:
                     self.pause_capture = False
-                    self.action_button.setEnabled(True)
-                    self.settings_button.setEnabled(True)
+                    for button in [self.add_window_button,self.action_button, self.screenshot_button, self.pin_button, self.clear_text_button, self.settings_button]:
+                        button.setEnabled(True)
 
     def update_countdown_text(self):
         self.countdown -= 1
@@ -744,7 +744,6 @@ class MainMenuWindow(QMainWindow):
             self.countdown_timer.stop()
             self.pause_capture = False
             self.action_button.setEnabled(True)
-            self.settings_button.setEnabled(True)
 
     def pin_on_top(self):
         if self.is_pined:
@@ -1094,8 +1093,8 @@ class MainMenuWindow(QMainWindow):
 
         self.resume_capture_timer.stop()
         self.countdown_timer.stop()
-        self.action_button.setEnabled(True)
-        self.settings_button.setEnabled(True)
+        for button in [self.add_window_button,self.action_button, self.screenshot_button, self.pin_button, self.clear_text_button, self.settings_button]:
+            button.setEnabled(True)
 
         # set the add_window_button back to normal
         self.add_window_button.setStyleSheet(
