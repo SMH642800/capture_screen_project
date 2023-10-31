@@ -741,8 +741,8 @@ class MainMenuWindow(QMainWindow):
         if self.countdown >= 0:
             self.action_button.setText(str(self.countdown + 1))
         else:
-            self.countdown_timer.stop()
             self.pause_capture = False
+            self.countdown_timer.stop()
             self.action_button.setEnabled(True)
 
     def pin_on_top(self):
@@ -1090,6 +1090,8 @@ class MainMenuWindow(QMainWindow):
     def handle_screen_capture_window_closed(self):
         # Slot to handle the screen capture window being closed
         self.screen_capture_window = None
+
+        self.pause_capture = False
 
         self.resume_capture_timer.stop()
         self.countdown_timer.stop()
