@@ -175,6 +175,9 @@ class SettingsWindow(QDialog):
  
         layout.addWidget(tabs)
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            event.ignore()  # 阻止 ESC 鍵事件傳播
     
     def center(self):
         screen = QApplication.primaryScreen()
