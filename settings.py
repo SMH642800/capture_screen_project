@@ -3,12 +3,27 @@
 import os
 import sys
 import shutil
-from PySide6.QtCore import QStandardPaths, QUrl, Signal, QRect, QPoint, QPropertyAnimation, QEasingCurve, Property
+from PySide6.QtCore import QStandardPaths, QUrl, Signal, QRect, QPoint, QPropertyAnimation, QEasingCurve, Property, QThread
 from PySide6.QtGui import QFont, Qt, QDesktopServices, QPixmap, QPainter, QColor
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QTabWidget, QApplication, QWidget, QLabel, QComboBox, QPushButton, QFrame, QColorDialog, QFileDialog, QMessageBox, QCheckBox
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QTabWidget, QWidget, QLabel, QComboBox, QPushButton, QFrame, QColorDialog, QFileDialog, QMessageBox, QCheckBox
 
 from config_handler import *
 from google_credentials import *
+
+
+class CheckGoogleCredentialThread(QThread):
+    google_credential_checked = Signal(str)
+
+    def __init__(self, config_handler, google_credential):
+        super().__init__()
+        self.config_handler = config_handler
+        self.google_credential = google_credential
+
+    def run(self):
+        google_key_file_path = self.config_handler.get_google_credential_path()
+        self.google_credential.check_google_credential(google_key_file_path)
+        message = self.google_credential.get_message()
+        self.google_credential_checked.emit(message)
 
 
 # 創建 slide toggle check box
@@ -173,6 +188,11 @@ class SettingsWindow(QDialog):
         tabs.setStyleSheet("QTabBar::tab { font-size: 14px; }")  # set tabs font size: 14px
  
         layout.addWidget(tabs)
+
+        # start check google credential state thread
+        self.check_google_credential_thread = CheckGoogleCredentialThread(self.config_handler, self.google_credential)
+        self.check_google_credential_thread.google_credential_checked.connect(self.update_google_credential_state_label)
+        self.check_google_credential_thread.start()
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
@@ -409,28 +429,6 @@ class SettingsWindow(QDialog):
             "QLabel { qproperty-alignment: AlignCenter; } "  # 文字置中
         )
 
-        # check google_credential can use or not
-        google_key_file_path = self.config_handler.get_google_credential_path()
-        self.google_credential.check_google_credential(google_key_file_path)
-
-        # set the text with return message from check_google_credential
-        message = self.google_credential.get_message()
-        self.google_credential_state.setText(message)
-
-        # 設置 google 憑證 button 的顯示文字
-        successed_message = "憑證有效"
-        failed_message = "憑證無效"
-        not_set_message = "尚未設置憑證"
-        if successed_message in self.google_credential.get_message():
-            self.set_credentials_button.setText("更新 Google 憑證")
-        if failed_message in self.google_credential.get_message():
-            self.set_credentials_button.setText("更新 Google 憑證")
-        if not_set_message in self.google_credential.get_message():
-            self.set_credentials_button.setText("設定 Google 憑證")
-
-        # send signal that make main windows update the google state
-        self.update_google_credential_state.emit()
-
         # 創建如何取得google憑證連結
         new_file_path = os.path.join(self.app_dir_path, "sub-google-api.html")
         self.credentials_link = QLabel(f'<a href="file://{new_file_path}">如何取得 Google 憑證？</a>')
@@ -451,6 +449,27 @@ class SettingsWindow(QDialog):
         system_settings.setLayout(layout)
 
         return system_settings
+    
+    def update_google_credential_state_label(self, message):
+        # 設置 google 憑證狀態
+        self.google_credential_state.setText(message)
+
+        # send signal that make main windows update status
+        self.update_google_credential_state.emit()
+
+        # 設置 google 憑證 button 的顯示文字
+        successed_message = "憑證有效"
+        failed_message = "憑證無效"
+        not_set_message = "尚未設置憑證"
+        if successed_message in self.google_credential.get_message():
+            self.set_credentials_button.setText("更新 Google 憑證")
+        if failed_message in self.google_credential.get_message():
+            self.set_credentials_button.setText("更新 Google 憑證")
+        if not_set_message in self.google_credential.get_message():
+            self.set_credentials_button.setText("設定 Google 憑證")
+
+        # close check_google_credential state thread
+        self.check_google_credential_thread.quit()
     
     def open_google_credential_settings_link(self, url):
         # 使用 QDesktopServices 打開 URL
