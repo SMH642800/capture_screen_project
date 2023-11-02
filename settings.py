@@ -468,7 +468,6 @@ class SettingsWindow(QDialog):
         if not_set_message in self.google_credential.get_message():
             self.set_credentials_button.setText("設定 Google 憑證")
 
-        print(self.check_google_credential_thread.count())
         # close check_google_credential state thread
         self.check_google_credential_thread.quit()
         self.check_google_credential_thread.wait()
