@@ -24,7 +24,7 @@ class CheckGoogleCredentialThread(QThread):
         self.google_credential.check_google_credential(google_key_file_path)
         message = self.google_credential.get_message()
         self.google_credential_checked.emit(message)
-
+        
 
 # 創建 slide toggle check box
 class SlideToggle(QCheckBox):
@@ -468,8 +468,10 @@ class SettingsWindow(QDialog):
         if not_set_message in self.google_credential.get_message():
             self.set_credentials_button.setText("設定 Google 憑證")
 
+        print(self.check_google_credential_thread.count())
         # close check_google_credential state thread
         self.check_google_credential_thread.quit()
+        self.check_google_credential_thread.wait()
     
     def open_google_credential_settings_link(self, url):
         # 使用 QDesktopServices 打開 URL
