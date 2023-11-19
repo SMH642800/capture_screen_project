@@ -697,23 +697,37 @@ class MainMenuWindow(QMainWindow):
             if texts:
                 detected_text = texts[0].description
 
-                # 设置OCR识别文本
+                # 設置 OCR 結果顯示在介面上
                 self.ocr_text_label.setText(f'{detected_text}')
-    
-                # 將辨識的文字按行分割
-                lines = detected_text.replace("\n", "")
+
+                # 將句子全部連接再一起
+                sentence = detected_text.replace("\n", "")
+
+                # 根據換行符號來分割文本成一行一行句子
+                lines = detected_text.splitlines()
+                translated_lines = []
 
                 # Google 翻譯
                 target_language = "zh-TW"  # 將此替換為你想要的目標語言代碼（例如：英文 --> en, 繁體中文 --> zh-TW）
-                translated_lines = client_translate.translate(lines, target_language=target_language)
+                
+                # 第一種情況：要辨識的是一行行選項
+                for line in lines:
+                    # translate
+                    translated_line = client_translate.translate(line, target_language=target_language)
+                    # Unescape HTML entities
+                    unescape_translated_text = html.unescape(translated_line["translatedText"])
+                    # join to list
+                    translated_lines.append(unescape_translated_text)
+                result_1 = "\n".join(translated_lines)
 
-                # Unescape HTML entities
-                unescape_translated_text = html.unescape(translated_lines["translatedText"])
+                # 第二種情況：要辨識的是一整段完整的句子（因太長而被分割成數行）
+                translated_sentence = client_translate.translate(sentence, target_language=target_language)
+                unescape_translated_sentence = html.unescape(translated_sentence["translatedText"])
+                result_2 = unescape_translated_sentence
 
-                # 將翻譯後的行重新組合成一個帶有換行的字符串
-                translated_text_with_newlines = unescape_translated_text.replace("。", "。\n").replace('？', '？\n').replace('！', '！\n')  # 以句點和問號為換行分界點
-                # self.translation_text_label.setText(translated_text_with_newlines)
-                self.translation_text_label.setText(f'{unescape_translated_text}')  # 完全不以句點和問號為換行分界點
+                # 將兩種情況結合再一起，顯示在介面上
+                final_result = f'{result_1}\n\n==============================================\n\n{result_2}'
+                self.translation_text_label.setText(final_result)
             else:
                 pass
 
