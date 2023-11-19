@@ -1,16 +1,18 @@
-## 首頁
+# Babel Tower
+
+Babel Tower 是一款免費、開源的應用程式，此應用程式是專門針對多語系遊戲和影音領域的即時文本翻譯系統，透過此系統盡情享受多語系的遊戲和影音娛樂內容，不再因為看不懂外文而無法享受其中。
 
 - Babel Tower 使用說明書
-   - [功能簡介](#功能簡介)
-      - [About](#about)
-      - [主介面](#主介面)
-      - [設定頁面](#設定頁面)
-   - [如何使用？](#如何使用)
-      - [擷取畫面自動翻譯](#擷取畫面自動翻譯字幕文本)
-      - [單次截圖辨識及翻譯](#單次截圖辨識及翻譯)
-      - [截圖翻譯說明](#截圖翻譯說明)
-   - [常見 Q&A](#常見-qa)
-   - [如何申請 Google Cloud Platform API](#如何申請-google-cloud-platform-api)
+  - [功能簡介](#功能簡介)
+    - [About](#about)
+    - [主介面](#主介面)
+    - [設定頁面](#設定頁面)
+  - [如何使用？](#如何使用)
+    - [擷取畫面自動翻譯](#擷取畫面自動翻譯字幕文本)
+    - [單次截圖辨識及翻譯](#單次截圖辨識及翻譯)
+    - [截圖翻譯說明](#截圖翻譯說明)
+  - [常見 Q&A](#常見-qa)
+  - [如何申請 Google Cloud Platform API](#如何申請-google-cloud-platform-api)
 
 ---
 
@@ -18,38 +20,60 @@
 
 ### About
 
-此軟體是應用 OCR 文字辨識技術以實現即時翻譯功能，此軟體需要連接網路才能使用。
+此軟體是應用 OCR 文字辨識技術以及 Google 翻譯 API 以實現即時翻譯功能，需要連接網路才能使用。由於此系統功能皆為使用線上 API 來實現，因此不會安裝任何第三方軟體在您的電腦上，也不會修改到任何遊戲檔案內容。只要有字幕顯示在畫面上，便可使用此軟體來辨識和翻譯字幕。
+
+※ 注意：由於此系統是透過 [GCP](https://console.cloud.google.com/welcome?hl=zh-tw) 的 API 來實現功能，使用 API 是需要付費的，請謹慎評估之後再決定是否要下載使用！
 
 ### 主介面
 
 ![主介面](img/github/main-window.png)
 
-- (image) 1. 開啟【擷取視窗】：視窗開啟之後，將視窗拖曳到要翻譯的字幕區塊上，並將視窗大小調整到適當大小（建議不要框選到不相關的區塊，以免影響辨識和翻譯效果）
-   - (image)：當擷取視窗已開啟時，會將按鈕常亮。若已開啟的情況下，卻找不到擷取視窗時，可以再按一次按鈕，會將擷取視窗喚醒到所有視窗的最上層
-- (image) 2. 開始或暫停【擷取畫面】功能：當擷取視窗開啟，並調整到適當大小後，按下按鈕便會開始擷取畫面並即時翻譯字幕文本
-- (image) 3.螢幕截圖功能：按下按鈕之後，框選你要辨識翻譯的區塊後，便會將結果顯示在介面上
-- (image) 4. 開啟或關閉【釘選視窗】功能：默認為開啟，開啟後主介面會釘選在所有視窗的的最上層。若【擷取視窗】也開啟的狀態下，會跟著主界面一起連動
-- (image) 5. 清除主介面上的文字
-- (image) 6. 開啟【設定】視窗
+<img src="img/ui/add_capture_window.png" alt="開啟擷取視窗" height="28" style="border: 1px solid gray;">
+
+1. 開啟【擷取視窗】：視窗開啟之後，將視窗拖曳到要翻譯的字幕區塊上，並將視窗大小調整到適當大小（建議不要框選到不相關的區塊，以免影響辨識和翻譯效果）
+   - <img src="img/github/bright_ui_icon.png" alt="icon常亮" height="28" >：當擷取視窗已開啟時，會將按鈕常亮。若已開啟的情況下，卻找不到擷取視窗時，可以再按一次按鈕，會將擷取視窗喚醒到所有視窗的最上層
+
+<img src="img/ui/record_button_start.svg" alt="開始擷取" height="28" style="border: 1px solid gray;"> <img src="img/ui/record_button_stop.png" alt="停止擷取" height="28" style="border: 1px solid gray;">
+
+2. 開始或暫停【擷取畫面】功能：當擷取視窗開啟，並調整到適當大小後，按下按鈕便會開始擷取畫面並即時翻譯字幕文本
+
+<img src="img/ui/screenshot_button.png" alt="螢幕截圖" height="28" style="border: 1px solid gray;">
+
+3. 螢幕截圖功能：按下按鈕之後，框選你要辨識翻譯的區塊後，便會將結果顯示在介面上
+
+<img src="img/ui/pin_button_disable.png" alt="釘選" height="28" style="border: 1px solid gray;"> <img src="img/ui/pin_button_enable.png" alt="釘選" height="28" style="border: 1px solid gray;">
+
+4. 開啟或關閉【釘選視窗】功能：默認為開啟，開啟後主介面會釘選在所有視窗的的最上層。若【擷取視窗】也開啟的狀態下，會跟著主界面一起連動
+
+<img src="img/ui/cleanup_button.png" alt="清除文字" height="28" style="border: 1px solid gray;">
+
+5. 清除主介面上的文字
+
+<img src="img/ui/settings_button.svg" alt="設定" height="28" style="border: 1px solid gray;">
+
+6. 開啟【設定】視窗
 
 ### 設定頁面
 
 - 文字
-   ![設定-文字](img/github/settings-text.png) 
-   - 可調整主介面上的辨識和翻譯結果的【文字大小】及【文字顏色】
+  ![設定-文字](img/github/settings-text.png)
+  - 可調整主介面上的辨識和翻譯結果的【文字大小】及【文字顏色】
 - 擷取
-   ![設定-擷取](img/github/settings-capture.png) 
-   - 可調整擷取畫面的頻率（即辨識的頻率），預設為【標準 (2 秒)】
-   - 擷取頻率建議值：
-      - 若字幕以一個一個字顯示，而非一次完整顯示整句，建議將頻率調整成【3 秒】或以上 
-      - 若為一次顯示完整的句子，則根據字幕顯示的速度自行調整為適當的頻率秒數 
-   - 【截圖後自動繼續擷取】功能：開啟後，當你在擷取畫面模式時使用截圖功能辨識畫面中某個區塊後，系統會自動倒數5秒，倒數結束之後自動恢復先前的擷取模式。如果關閉此功能，在截圖後，你就必須手動恢復先前的擷取畫面模式。預設為【關閉】。
-   ![截圖後自動繼續擷取](img/github/auto-recapture.png)
+  ![設定-擷取](img/github/settings-capture.png)
 
-- 系統
-   ![設定-系統](img/github/settings-system.png) 
-   - 在此分頁上，你可以設定 Google 憑證。選擇申請好的憑證檔案後，憑證檔案會被複製到應用程式的資料夾內。這個設定是永久性的，每次啟動應用程式時都會檢查已設定的 Google 憑證是否可用。
-   - 若舊的憑證無法使用了，也可以在此頁面更新憑證。- 要如何申請 Google 憑證，可點選這裡[link](#如何申請-google-cloud-platform-api)。
+  - 可調整擷取畫面的頻率（即辨識的頻率），預設為【標準 (2 秒)】
+  - 擷取頻率建議值：
+    - 若字幕以一個一個字顯示，而非一次完整顯示整句，建議將頻率調整成【3 秒】或以上
+    - 若為一次顯示完整的句子，則根據字幕顯示的速度自行調整為適當的頻率秒數
+  - 【截圖後自動繼續擷取】功能：開啟後，當你在擷取畫面模式時使用截圖功能辨識畫面中某個區塊後，系統會自動倒數5秒，倒數結束之後自動恢復先前的擷取模式。如果關閉此功能，在截圖後，你就必須手動恢復先前的擷取畫面模式。預設為【關閉】。
+    ![截圖後自動繼續擷取](img/github/auto-recapture.png)
+
+- 系統  
+  ![設定-系統](img/github/settings-system.png)
+
+  - 在此分頁上，你可以設定 Google 憑證。選擇申請好的憑證檔案後，憑證檔案會被複製到應用程式的資料夾內。這個設定是永久性的，每次啟動應用程式時都會檢查已設定的 Google 憑證是否可用。
+
+  - 若舊的憑證無法使用了，也可以在此頁面更新憑證。- 要如何申請 Google 憑證，可點選這裡[link](#如何申請-google-cloud-platform-api)。
 
 ---
 
@@ -61,6 +85,7 @@
    ![擷取畫面-步驟一](img/github/capture-example-image01.png)
 
 2. 接者，按下開始擷取按鈕（由左往右數過來第二個按鈕）
+
    ![擷取畫面-步驟二](img/github/capture-example-image02.png)
 
 3. 按下之後，便會自動擷取您選定的視窗位置的字幕文本內容，然後將其翻譯成中文。當您啟動功能後，系統會持續自動擷取您剛剛選擇的範圍，直到您按下暫停擷取為止。
@@ -69,6 +94,7 @@
 ### 單次截圖辨識及翻譯
 
 1. 首先，按下螢幕截圖按鈕（由左往右數過來第三個按鈕）
+
    ![截圖辨識-步驟一](img/github/screenshot-example-image01.png)
 
 2. 接者，框選要截圖辨識的區塊
@@ -80,12 +106,12 @@
 - 注意：在 Windows 版本中，若是多螢幕狀態，截圖範圍將僅限於應用程式主介面所在的螢幕。
 
 ### 截圖翻譯說明
+
 - 由於目前系統無法判斷當前截圖辨識的文本為一整段句子還是多個選項的文本，因此系統將會一次呈現兩種結果。
 - 情況一：選項文本，請看上半部分
-![截圖翻譯說明一](img/github/screenshot-explain-image01.png)
-  
+  ![截圖翻譯說明一](img/github/screenshot-explain-image01.png)
 - 情況二：整段句子，請看下半部分
-![截圖翻譯說明二](img/github/screenshot-explain-image02.png)
+  ![截圖翻譯說明二](img/github/screenshot-explain-image02.png)
 
 ---
 
