@@ -51,7 +51,7 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='myAPP',
+    name='Babel Tower',
 )
 app = BUNDLE(
     coll,
