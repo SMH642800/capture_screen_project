@@ -22,7 +22,7 @@
 
 ### 主介面
 
-![upload_7f7d5468c1539f1c605e82b3d69269e5](https://hackmd.io/_uploads/Bk1XFivVa.png)
+![主介面](img/github/main-window.png)
 
 - (image) 1. 開啟【擷取視窗】：視窗開啟之後，將視窗拖曳到要翻譯的字幕區塊上，並將視窗大小調整到適當大小（建議不要框選到不相關的區塊，以免影響辨識和翻譯效果）
    - (image)：當擷取視窗已開啟時，會將按鈕常亮。若已開啟的情況下，卻找不到擷取視窗時，可以再按一次按鈕，會將擷取視窗喚醒到所有視窗的最上層
@@ -35,19 +35,19 @@
 ### 設定頁面
 
 - 文字
-   ![截圖 2023-11-18 20.00.58](https://hackmd.io/_uploads/rJIFPX8N6.png) 
+   ![設定-文字](img/github/settings-text.png) 
    - 可調整主介面上的辨識和翻譯結果的【文字大小】及【文字顏色】
 - 擷取
-   ![截圖 2023-11-18 20.02.39](https://hackmd.io/_uploads/SJsJO78Na.png) 
+   ![設定-擷取](img/github/settings-capture.png) 
    - 可調整擷取畫面的頻率（即辨識的頻率），預設為【標準 (2 秒)】
    - 擷取頻率建議值：
       - 若字幕以一個一個字顯示，而非一次完整顯示整句，建議將頻率調整成【3 秒】或以上 
       - 若為一次顯示完整的句子，則根據字幕顯示的速度自行調整為適當的頻率秒數 
    - 【截圖後自動繼續擷取】功能：開啟後，當你在擷取畫面模式時使用截圖功能辨識畫面中某個區塊後，系統會自動倒數5秒，倒數結束之後自動恢復先前的擷取模式。如果關閉此功能，在截圖後，你就必須手動恢復先前的擷取畫面模式。預設為【關閉】。
-   ![截圖 2023-11-18 22.43.00](https://hackmd.io/_uploads/Hk_t6HLN6.png)
+   ![截圖後自動繼續擷取](img/github/auto-recapture.png)
 
 - 系統
-   ![截圖 2023-11-18 20.02.54](https://hackmd.io/_uploads/BkFguQI4T.png) 
+   ![設定-系統](img/github/settings-system.png) 
    - 在此分頁上，你可以設定 Google 憑證。選擇申請好的憑證檔案後，憑證檔案會被複製到應用程式的資料夾內。這個設定是永久性的，每次啟動應用程式時都會檢查已設定的 Google 憑證是否可用。
    - 若舊的憑證無法使用了，也可以在此頁面更新憑證。- 要如何申請 Google 憑證，可點選這裡[link](#如何申請-google-cloud-platform-api)。
 
@@ -58,34 +58,34 @@
 ### 擷取畫面自動翻譯字幕文本
 
 1. 首先，開啟擷取視窗，將視窗拖曳到字幕文本區塊上，並將使窗調整至適當大小
-   ![截圖 2023-11-18 21.57.44](https://hackmd.io/_uploads/SJwNiXP46.jpg)
+   ![擷取畫面-步驟一](img/github/capture-example-image01.png)
 
 2. 接者，按下開始擷取按鈕（由左往右數過來第二個按鈕）
-   ![截圖 2023-11-18 22.14.38](https://hackmd.io/_uploads/H1bLdrIV6.png)
+   ![擷取畫面-步驟二](img/github/capture-example-image02.png)
 
 3. 按下之後，便會自動擷取您選定的視窗位置的字幕文本內容，然後將其翻譯成中文。當您啟動功能後，系統會持續自動擷取您剛剛選擇的範圍，直到您按下暫停擷取為止。
-   ![中截圖 2023-11-18 21.58.47](https://hackmd.io/_uploads/BytA_BLN6.png)
+   ![擷取畫面-步驟三](img/github/capture-example-image03.png)
 
 ### 單次截圖辨識及翻譯
 
 1. 首先，按下螢幕截圖按鈕（由左往右數過來第三個按鈕）
-   ![截圖 2023-11-18 22.24.35](https://hackmd.io/_uploads/H1erYS8E6.png)
+   ![截圖辨識-步驟一](img/github/screenshot-example-image01.png)
 
 2. 接者，框選要截圖辨識的區塊
-   ![截圖 2023-11-19 22.27.09](https://hackmd.io/_uploads/HyWKo5w4T.png)
+   ![截圖辨識-步驟二](img/github/screenshot-example-image02.png)
 
 3. 之後便會把剛剛框選的區塊進行辨識和翻譯
-   ![截圖 2023-11-19 22.25.08](https://hackmd.io/_uploads/Sk2tsqDNT.png)
+   ![截圖辨識-步驟三](img/github/screenshot-example-image03.png)
 
 - 注意：在 Windows 版本中，若是多螢幕狀態，截圖範圍將僅限於應用程式主介面所在的螢幕。
 
 ### 截圖翻譯說明
 - 由於目前系統無法判斷當前截圖辨識的文本為一整段句子還是多個選項的文本，因此系統將會一次呈現兩種結果。
 - 情況一：選項文本，請看上半部分
-![截圖 2023-11-19 21.21.53](https://hackmd.io/_uploads/HJ-qa9wET.jpg)
+![截圖翻譯說明一](img/github/screenshot-explain-image01.png)
   
 - 情況二：整段句子，請看下半部分
-![截圖 2023-11-19 22.46.13](https://hackmd.io/_uploads/Sy3PesPNT.jpg)
+![截圖翻譯說明二](img/github/screenshot-explain-image02.png)
 
 ---
 
