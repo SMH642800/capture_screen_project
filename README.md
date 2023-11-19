@@ -23,11 +23,13 @@ Babel Tower 是一款免費、開源的應用程式，此應用程式是專門�
 
 ※ 注意：由於此系統是透過 [GCP](https://console.cloud.google.com/welcome?hl=zh-tw) 的 API 來實現功能，使用 API 是需要付費的，請謹慎評估之後再決定是否要下載使用！
 
+---
+
 ### 主介面
 
 ![主介面](img/github/main-window.png)
 
-<img src="img/ui/add_capture_window.png" alt="開啟擷取視窗" height="28" style="border: 1px solid white;">
+<img src="img/ui/add_capture_window.png" alt="開啟擷取視窗" height="28" style="border: 1px solid gray;">
 
 1. 開啟【擷取視窗】：視窗開啟之後，將視窗拖曳到要翻譯的字幕區塊上，並將視窗大小調整到適當大小（建議不要框選到不相關的區塊，以免影響辨識和翻譯效果）
    - <img src="img/github/bright_ui_icon.png" alt="icon常亮" height="28" >：當擷取視窗已開啟時，會將按鈕常亮。若已開啟的情況下，卻找不到擷取視窗時，可以再按一次按鈕，會將擷取視窗喚醒到所有視窗的最上層
@@ -51,6 +53,8 @@ Babel Tower 是一款免費、開源的應用程式，此應用程式是專門�
 <img src="img/ui/settings_button.svg" alt="設定" height="28" style="border: 1px solid gray;">
 
 6. 開啟【設定】視窗
+
+---
 
 ### 設定頁面
 
@@ -90,6 +94,8 @@ Babel Tower 是一款免費、開源的應用程式，此應用程式是專門�
 3. 按下之後，便會自動擷取您選定的視窗位置的字幕文本內容，然後將其翻譯成中文。當您啟動功能後，系統會持續自動擷取您剛剛選擇的範圍，直到您按下暫停擷取為止。
    ![擷取畫面-步驟三](img/github/capture-example-image03.png)
 
+---
+
 ### 單次截圖辨識及翻譯
 
 1. 首先，按下螢幕截圖按鈕（由左往右數過來第三個按鈕）
@@ -100,9 +106,12 @@ Babel Tower 是一款免費、開源的應用程式，此應用程式是專門�
    ![截圖辨識-步驟二](img/github/screenshot-example-image02.png)
 
 3. 之後便會把剛剛框選的區塊進行辨識和翻譯
+
    ![截圖辨識-步驟三](img/github/screenshot-example-image03.png)
 
 - 注意：在 Windows 版本中，若是多螢幕狀態，截圖範圍將僅限於應用程式主介面所在的螢幕。
+
+---
 
 ### 截圖翻譯說明
 
