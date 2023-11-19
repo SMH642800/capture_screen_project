@@ -726,7 +726,7 @@ class MainMenuWindow(QMainWindow):
                 result_2 = unescape_translated_sentence
 
                 # 將兩種情況結合再一起，顯示在介面上
-                final_result = f'{result_1}\n\n==============================================\n\n{result_2}'
+                final_result = f'{result_1}\n\n===================================\n\n{result_2}'
                 self.translation_text_label.setText(final_result)
             else:
                 pass
