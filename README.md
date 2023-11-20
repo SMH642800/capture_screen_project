@@ -2,6 +2,7 @@
 
 Babel Tower 是一款免費、開源的應用程式，此應用程式是專門針對多語系遊戲和影音領域的即時文本翻譯系統，透過此系統盡情享受多語系的遊戲和影音娛樂內容，不再因為看不懂外文而無法享受其中。
 
+- [Download](#download)
 - [功能簡介](#功能簡介)
   - [About](#about)
   - [主介面](#主介面)
@@ -12,6 +13,19 @@ Babel Tower 是一款免費、開源的應用程式，此應用程式是專門�
   - [截圖翻譯說明](#截圖翻譯說明)
 - [常見 Q&A](#常見-qa)
 - [如何申請 Google Cloud Platform API](#如何申請-google-cloud-platform-api)
+- [Getting Started](#getting-started)
+- [Building App](#building-app)
+   - [macOS](#macos)
+   - [Windows](#windows)
+- [Changing Translated Target Language](#changing-translated-target-langauage)
+
+---
+
+## Download
+
+| Windows                  | macOS                   |
+|--------------------------|-------------------------|
+| [Portable ZIP][latest]   | [DMG][latest]           |
 
 ---
 
@@ -162,3 +176,68 @@ Babel Tower 是一款免費、開源的應用程式，此應用程式是專門�
 - 請注意，由於 cloud vision 和 cloud translation API 每個月皆有一定次數的免費額度限制，超過免費額度上限之後必須支付使用 API 的費用。
 - cloud vision 免費額度 ： 每個月前 1000 次請求免費，之後==每 1000 次請求需支付 1.5 美元==（實際收費方案請自行查閱 GCP (Google Cloud Platform) 頁面，此文章為 2023 年時撰寫的）
   :::
+
+---
+
+## Getting Started
+
+To compile BabelTower from source code, follow these steps:
+
+1. Install `Python`, the following Python packages are required:
+   - macOS:
+      - pyside6
+      - pillow
+      - opencv-python
+      - toml
+      - google-cloud-vision
+      - google-cloud-translate
+
+   - Windwos:
+      - pyside6
+      - pillow
+      - opencv-python
+      - pygetwindow
+      - mss
+      - toml
+      - google-cloud-translate
+      - google-cloud-vision
+
+2. Clone the BabelTower repository
+3. Run `cd BabelTower` to enter the project folder
+4. Run `python main.py` or `python3 main.py` to start the App:
+   - on `macOS`, you need to run `cd app/macos` first
+   - on `windows`, you need to run `cd app/windows` first
+
+---
+
+## Building App
+
+If you want to compile the source code into an executable file, follow these steps:
+
+1. Install `Python`, packages same as [Getting Started](#getting-started) in step 1
+2. Install `pyinstaller` package (This is a package used to compile `Python files` into `Executable file`)
+3. Clone the BabelTower repository
+4. Run `cd BabelTower` to enter the project folder
+5. Run `pyinstaller ${.spec file}` to build the App
+
+### macOS 
+```bash
+pyinstaller myAPP_macOS.spec
+```
+### windows
+```bash
+pyinstaller myAPP_windows.spec
+```
+
+---
+
+## Changing Translated Target Langauage
+
+If you want to change the translated target language to the one you prefer, go to `main.py` and change below code:
+
+```python
+target_language = "zh-TW"  # Replace this with your target language code (e.g., English -> en, Japanese -> ja).
+```
+
+You can go to [here](https://cloud.google.com/translate/docs/languages) to check supported languages.
+
