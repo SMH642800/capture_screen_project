@@ -27,7 +27,7 @@ Babel Tower 是一款免費、開源的應用程式，此應用程式是專門�
 | ---------------------- | ----------------------- |
 | [Portable ZIP][latest] | [DMG Installer][latest] |
 
-[latest]: https://github.com/SMH642800/capture_screen_project/releases/latest
+[latest]: https://github.com/SMH642800/BabelTower/releases/latest
 
 ---
 
