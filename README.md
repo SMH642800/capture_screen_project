@@ -27,7 +27,7 @@ Babel Tower 是一款免費、開源的應用程式，此應用程式是專門�
 | ---------------------- | ----------------------- |
 | [Portable ZIP][latest] | [DMG Installer][latest] |
 
-[latest]: https://github.com/SMH642800/BabelTower/releases/latest
+[latest]: https://github.com/SMH642800/capture_screen_project/releases/latest
 
 ---
 
@@ -225,13 +225,9 @@ To compile BabelTower from source code, follow these steps:
 If you want to compile the source code into an executable file, follow these steps:
 
 1. Install `Python`, packages same as [Getting Started](#getting-started) in step 1
-
 2. Install `pyinstaller` package (This is a package used to compile `Python files` into `Executable file`)
-
 3. Clone the BabelTower repository
-
 4. Run `cd BabelTower` to enter the project folder
-
 5. Run `pyinstaller ${.spec file}` to build the App
 
 ### macOS
