@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['main.py'],
+    ['app/macos/main.py'],
     pathex=[],
     binaries=[],
-    datas=[('sub-google-api.html', '.'), ('css', 'css'), ('img', 'img')],
+    datas=[('html', 'html'), ('html/css', 'html/css'), ('img', 'img')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -31,13 +31,13 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='myAPP',
+    name='Babel Tower',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
     console=False,
-    icon='Babel_Tower_macOS.icns',
+    icon='app/macos/Babel_Tower_macOS.icns',
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
@@ -56,6 +56,6 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name='Babel Tower.app',
-    icon='Babel_Tower_macOS.icns',
+    icon='app/macos/Babel_Tower_macOS.icns',
     bundle_identifier=None,
 )

@@ -122,7 +122,8 @@ class MainMenuWindow(QMainWindow):
             # 应用程序被打包
             app_dir = sys._MEIPASS
         else:
-            app_dir = os.path.dirname(os.path.abspath(__file__))
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            app_dir = os.path.dirname(os.path.dirname(current_dir))
 
         self.app_dir = app_dir
 

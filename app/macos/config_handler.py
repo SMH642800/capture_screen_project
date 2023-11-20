@@ -19,7 +19,9 @@ class ConfigHandler():
             app_dir = sys._MEIPASS
             self.config_file_path = os.path.join(app_dir, "config.toml")
         else:
-            self.config_file_path = "config.toml"
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            app_dir = os.path.dirname(os.path.dirname(current_dir))
+            self.config_file_path = os.path.join(app_dir, "config.toml")
 
         self.config = self.read_config_file()
 
