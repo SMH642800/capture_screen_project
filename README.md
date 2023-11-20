@@ -27,6 +27,8 @@ Babel Tower 是一款免費、開源的應用程式，此應用程式是專門�
 |--------------------------|-------------------------|
 | [Portable ZIP][latest]   | [DMG][latest]           |
 
+[latest]: https://github.com/SMH642800/capture_screen_project/releases/latest
+
 ---
 
 ## 功能簡介
@@ -185,22 +187,26 @@ To compile BabelTower from source code, follow these steps:
 
 1. Install `Python`, the following Python packages are required:
    - macOS:
-      - pyside6
-      - pillow
-      - opencv-python
-      - toml
-      - google-cloud-vision
-      - google-cloud-translate
+   ```bash
+   pyside6
+   pillow
+   opencv-python
+   toml
+   google-cloud-vision
+   google-cloud-translate
+   ```
 
    - Windwos:
-      - pyside6
-      - pillow
-      - opencv-python
-      - pygetwindow
-      - mss
-      - toml
-      - google-cloud-translate
-      - google-cloud-vision
+   ```bash
+   pyside6
+   pillow
+   opencv-python
+   pygetwindow
+   mss
+   toml
+   google-cloud-vision
+   google-cloud-translate
+   ```
 
 2. Clone the BabelTower repository
 3. Run `cd BabelTower` to enter the project folder
