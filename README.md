@@ -50,6 +50,8 @@ Babel Tower 是一款免費、開源的應用程式，此應用程式是專門�
 1. 開啟【擷取視窗】：視窗開啟之後，將視窗拖曳到要翻譯的字幕區塊上，並將視窗大小調整到適當大小（建議不要框選到不相關的區塊，以免影響辨識和翻譯效果）
    - <img src="img/github/bright_ui_icon.png" alt="icon常亮" height="28" >：當擷取視窗已開啟時，會將按鈕常亮。若已開啟的情況下，卻找不到擷取視窗時，可以再按一次按鈕，會將擷取視窗喚醒到所有視窗的最上層
 
+<div style="background-color: #090909; display: inline-block; padding: 5px;"><img src="img/ui/record_button_start.svg" alt="開始擷取" height="28" style="display: block;"></div><img src="img/ui/record_button_stop.png" alt="停止擷取" height="28" style="border: 1px solid gray;">
+
 <img src="img/ui/record_button_start.svg" alt="開始擷取" height="28" style="border: 1px solid gray;"> <img src="img/ui/record_button_stop.png" alt="停止擷取" height="28" style="border: 1px solid gray;">
 
 2. 開始或暫停【擷取畫面】功能：當擷取視窗開啟，並調整到適當大小後，按下按鈕便會開始擷取畫面並即時翻譯字幕文本
