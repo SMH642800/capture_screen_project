@@ -23,7 +23,7 @@ Babel Tower 是一款免費、開源的應用程式，此應用程式是專門�
 
 ## Download
 
-| Windows                | macOS         |
+| Windows                | macOS (ARM64) |
 | ---------------------- | ------------- |
 | [Portable ZIP][latest] | [DMG][latest] |
 
