@@ -15,17 +15,17 @@ Babel Tower 是一款免費、開源的應用程式，此應用程式是專門�
 - [如何申請 Google Cloud Platform API](#如何申請-google-cloud-platform-api)
 - [Getting Started](#getting-started)
 - [Building App](#building-app)
-   - [macOS](#macos)
-   - [Windows](#windows)
+  - [macOS](#macos)
+  - [Windows](#windows)
 - [Changing Translated Target Language](#changing-translated-target-langauage)
 
 ---
 
 ## Download
 
-| Windows                  | macOS                   |
-|--------------------------|-------------------------|
-| [Portable ZIP][latest]   | [DMG][latest]           |
+| Windows                | macOS         |
+| ---------------------- | ------------- |
+| [Portable ZIP][latest] | [DMG][latest] |
 
 [latest]: https://github.com/SMH642800/capture_screen_project/releases/latest
 
@@ -45,10 +45,10 @@ Babel Tower 是一款免費、開源的應用程式，此應用程式是專門�
 
 ![主介面](img/github/main-window.png)
 
-<img src="img/ui/processed_add_capture_window.png" alt="開啟擷取視窗" height="28" style="border: 1px solid gray;">
+<img src="img/github/ui_icons/processed_add_capture_window.png" alt="開啟擷取視窗" height="28" style="border: 1px solid gray;">
 
 1. 開啟【擷取視窗】：視窗開啟之後，將視窗拖曳到要翻譯的字幕區塊上，並將視窗大小調整到適當大小（建議不要框選到不相關的區塊，以免影響辨識和翻譯效果）
-   - <img src="img/github/bright_ui_icon.png" alt="icon常亮" height="28" >：當擷取視窗已開啟時，會將按鈕常亮。若已開啟的情況下，卻找不到擷取視窗時，可以再按一次按鈕，會將擷取視窗喚醒到所有視窗的最上層
+   - <img src="img/github/ui_icons/bright_ui_icon.png" alt="icon常亮" height="28" >：當擷取視窗已開啟時，會將按鈕常亮。若已開啟的情況下，卻找不到擷取視窗時，可以再按一次按鈕，會將擷取視窗喚醒到所有視窗的最上層
 
 <div style="background-color: #090909; display: inline-block; padding: 5px;"><img src="img/ui/record_button_start.svg" alt="開始擷取" height="28" style="display: block;"></div><img src="img/ui/record_button_stop.png" alt="停止擷取" height="28" style="border: 1px solid gray;">
 
@@ -188,7 +188,9 @@ Babel Tower 是一款免費、開源的應用程式，此應用程式是專門�
 To compile BabelTower from source code, follow these steps:
 
 1. Install `Python`, the following Python packages are required:
+
    - macOS:
+
    ```bash
    pyside6
    pillow
@@ -199,6 +201,7 @@ To compile BabelTower from source code, follow these steps:
    ```
 
    - Windwos:
+
    ```bash
    pyside6
    pillow
@@ -228,11 +231,14 @@ If you want to compile the source code into an executable file, follow these ste
 4. Run `cd BabelTower` to enter the project folder
 5. Run `pyinstaller ${.spec file}` to build the App
 
-### macOS 
+### macOS
+
 ```bash
 pyinstaller myAPP_macOS.spec
 ```
+
 ### windows
+
 ```bash
 pyinstaller myAPP_windows.spec
 ```
@@ -248,4 +254,3 @@ target_language = "zh-TW"  # Replace this with your target language code (e.g., 
 ```
 
 You can go to [here](https://cloud.google.com/translate/docs/languages) to check supported languages.
-
